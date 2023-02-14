@@ -60,6 +60,12 @@ let u_camera: WebGLUniformLocation;
 let u_projection: WebGLUniformLocation;
 let positionBuffer: WebGLBuffer;
 let colorBuffer: WebGLBuffer;
+let u_modelView: WebGLUniformLocation;
+const modelView: mat4 = mat4.create();
+
+mat4.rotateX(modelView, mat4.create(), Math.PI / 2);
+mat4.rotateY(modelView, mat4.create(), Math.PI / 2);
+mat4.rotateZ(modelView, mat4.create(), Math.PI / 2);
 
 // 天空盒
 let skyBoxProgram: WebGLProgram;
@@ -96,6 +102,7 @@ function init() {
     a_color = gl.getAttribLocation(program, 'a_color');
     u_camera = gl.getUniformLocation(program, 'u_camera')!;
     u_projection = gl.getUniformLocation(program, 'u_projection')!;
+    u_modelView = gl.getUniformLocation(program, 'u_modelView')!;
     console.log(a_color, a_position);
     positionBuffer = gl.createBuffer()!;
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -232,6 +239,7 @@ function renderScene(proMatrix: mat4) {
     // 传递参数
     gl.uniformMatrix4fv(u_projection, false, proMatrix);
     gl.uniformMatrix4fv(u_camera, false, cameraMatrix);
+    gl.uniformMatrix4fv(u_modelView, false, modelView);
     gl.drawArrays(gl.TRIANGLES, 0, 16 * 6);
   }
 }
@@ -294,24 +302,33 @@ function animate(time: number) {
   const position = vec3.clone(cameraPosition);
   const distance = vec3.length(position);
 
-  // const x = Math.cos(time / 1000) * distance;
-  // const y = Math.sin(time / 1000) * distance;
-  // const z = position[2];
-  // mat4.lookAt(cameraMatrix, [x, y, z], [0, 0, 0], [0, -1, 0]);
+  const x = Math.cos(time / 1000) * distance;
+  const y = Math.sin(time / 1000) * distance;
+  const z = position[2];
+  mat4.lookAt(cameraMatrix, [x, y, z], [0, 0, 0], [0, -1, 0]);
 }
 requestAnimationFrame(animate);
 
 const gui = new GUI();
 
-gui.add({ cameraX: 20 }, 'cameraX', -1000, 1000).onChange((val: number) => {
-  cameraPosition[0] = val;
-  mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
-}); // checkbox
-gui.add({ cameraY: 20 }, 'cameraY', -1000, 1000).onChange((val: number) => {
-  cameraPosition[1] = val;
-  mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
-}); // checkbox
-gui.add({ cameraZ: 20 }, 'cameraZ', -1000, 1000).onChange((val: number) => {
-  cameraPosition[2] = val;
-  mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
-}); // checkbox
+gui
+  .add({ cameraX: Math.PI / 2 }, 'cameraX', 0, Math.PI * 2)
+  .onChange((val: number) => {
+    mat4.rotateX(modelView, mat4.create(), val);
+    // cameraPosition[0] = val;
+    // mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
+  }); // checkbox
+gui
+  .add({ cameraY: Math.PI / 2 }, 'cameraY', 0, Math.PI * 2)
+  .onChange((val: number) => {
+    mat4.rotateY(modelView, mat4.create(), val);
+    // cameraPosition[1] = val;
+    // mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
+  }); // checkbox
+gui
+  .add({ cameraZ: Math.PI / 2 }, 'cameraZ', 0, Math.PI * 2)
+  .onChange((val: number) => {
+    mat4.rotateZ(modelView, mat4.create(), val);
+    // cameraPosition[2] = val;
+    // mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
+  }); // checkbox
