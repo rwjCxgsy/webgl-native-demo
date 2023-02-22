@@ -3,11 +3,12 @@ import * as skyBox from './geometry/box';
 import fs from './shader/shader.fs.glsl?raw';
 import vs from './shader/shader.vs.glsl?raw';
 import { createPlane } from './geometry/plane';
+import { mat4 as ___mt4 } from './matrix';
 
 console.log(createPlane(2, 1));
 
-import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import skyBoxVs from './shader/skybox/shader.vs.glsl?raw';
 import skyBoxFs from './shader/skybox/shader.fs.glsl?raw';
@@ -78,14 +79,13 @@ let sky_u_texture: WebGLUniformLocation;
 
 const skyTexture = gl.createTexture();
 
-let Camera = new PerspectiveCamera(
+let Camera = ___mt4.perspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.01,
   1000
 );
-
-Camera.position.set(100, 100, 100);
+let view = ___mt4.lookAt([300, 300, 300], [0, 0, 0], [0, 1, 0]);
 
 const control = new OrbitControls(Camera, canvas);
 
