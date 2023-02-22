@@ -1,8 +1,13 @@
-import { mat3, mat4, vec3, vec4 } from 'gl-matrix';
 import * as wordF from './geometry/f';
 import * as skyBox from './geometry/box';
 import fs from './shader/shader.fs.glsl?raw';
 import vs from './shader/shader.vs.glsl?raw';
+import { createPlane } from './geometry/plane';
+
+console.log(createPlane(2, 1));
+
+import { Matrix4, PerspectiveCamera, Vector3 } from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import skyBoxVs from './shader/skybox/shader.vs.glsl?raw';
 import skyBoxFs from './shader/skybox/shader.fs.glsl?raw';
@@ -11,7 +16,7 @@ import GUI from 'lil-gui';
 import './index.css';
 
 const canvas = document.querySelector('#root') as HTMLCanvasElement;
-const gl = canvas.getContext('webgl')!;
+const gl = canvas.getContext('webgl', { antialias: true })!;
 
 function initCanvas() {
   canvas.width =
@@ -61,34 +66,28 @@ let u_projection: WebGLUniformLocation;
 let positionBuffer: WebGLBuffer;
 let colorBuffer: WebGLBuffer;
 let u_modelView: WebGLUniformLocation;
-const modelView: mat4 = mat4.create();
-
-mat4.rotateX(modelView, mat4.create(), Math.PI / 2);
-mat4.rotateY(modelView, mat4.create(), Math.PI / 2);
-mat4.rotateZ(modelView, mat4.create(), Math.PI / 2);
 
 // 天空盒
 let skyBoxProgram: WebGLProgram;
 let sky_a_position: number;
 let sky_u_camera: WebGLUniformLocation;
 let sky_u_projection: WebGLUniformLocation;
+let sky_u_modelView: WebGLUniformLocation;
 let sky_positionBuffer: WebGLBuffer;
 let sky_u_texture: WebGLUniformLocation;
 
 const skyTexture = gl.createTexture();
 
-let perspectiveMatrix: mat4 = mat4.create();
-mat4.perspective(
-  perspectiveMatrix,
+let Camera = new PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
   0.01,
   1000
 );
 
-let cameraMatrix: mat4 = mat4.create();
-let cameraPosition: vec3 = [500, 500, 500];
-mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
+Camera.position.set(100, 100, 100);
+
+const control = new OrbitControls(Camera, canvas);
 
 function init() {
   // f字母
@@ -122,6 +121,7 @@ function init() {
 
     sky_a_position = gl.getAttribLocation(skyBoxProgram, 'a_position');
     sky_u_camera = gl.getUniformLocation(skyBoxProgram, 'u_camera')!;
+    sky_u_modelView = gl.getUniformLocation(skyBoxProgram, 'u_modelView')!;
     sky_u_projection = gl.getUniformLocation(skyBoxProgram, 'u_projection')!;
     sky_u_texture = gl.getUniformLocation(skyBoxProgram, 'u_texture')!;
 
@@ -170,6 +170,16 @@ function init() {
           gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
           gl.texParameteri(
             gl.TEXTURE_CUBE_MAP,
+            gl.TEXTURE_WRAP_S,
+            gl.CLAMP_TO_EDGE
+          );
+          gl.texParameteri(
+            gl.TEXTURE_CUBE_MAP,
+            gl.TEXTURE_WRAP_T,
+            gl.CLAMP_TO_EDGE
+          );
+          gl.texParameteri(
+            gl.TEXTURE_CUBE_MAP,
             gl.TEXTURE_MIN_FILTER,
             gl.LINEAR_MIPMAP_LINEAR
           );
@@ -181,7 +191,7 @@ function init() {
 }
 init();
 
-function renderScene(proMatrix: mat4) {
+function renderScene(camera: PerspectiveCamera) {
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
   // Clear the canvas.
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -194,35 +204,25 @@ function renderScene(proMatrix: mat4) {
     gl.bindBuffer(gl.ARRAY_BUFFER, sky_positionBuffer);
     gl.vertexAttribPointer(sky_a_position, 3, gl.FLOAT, false, 0, 0);
     // 传递参数
-    gl.uniformMatrix4fv(sky_u_projection, false, proMatrix);
-
-    // const matrix3 = mat3.create();
-
-    // mat3.fromMat4(matrix3, cameraMatrix);
-
-    const view = mat4.create();
-
-    mat4.set(
-      view,
-      cameraMatrix[0],
-      cameraMatrix[1],
-      cameraMatrix[2],
-      0,
-      cameraMatrix[4],
-      cameraMatrix[5],
-      cameraMatrix[6],
-      0,
-      cameraMatrix[8],
-      cameraMatrix[9],
-      cameraMatrix[10],
-      0,
-      cameraMatrix[12],
-      cameraMatrix[13],
-      cameraMatrix[14],
-      1
+    gl.uniformMatrix4fv(
+      sky_u_projection,
+      false,
+      camera.projectionMatrix.elements
     );
 
-    gl.uniformMatrix4fv(sky_u_camera, false, view);
+    gl.uniformMatrix4fv(
+      sky_u_camera,
+      false,
+      camera.matrixWorldInverse.elements
+    );
+
+    const modelView = new Matrix4();
+
+    const position = camera.position.clone();
+    position.add(new Vector3(0, -100, 0));
+    modelView.setPosition(position);
+
+    gl.uniformMatrix4fv(sky_u_modelView, false, modelView.elements);
     gl.uniform1i(sky_u_texture, 0);
     gl.drawArrays(gl.TRIANGLES, 0, 6 * 6);
   }
@@ -237,98 +237,17 @@ function renderScene(proMatrix: mat4) {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.vertexAttribPointer(a_position, 3, gl.FLOAT, false, 0, 0);
     // 传递参数
-    gl.uniformMatrix4fv(u_projection, false, proMatrix);
-    gl.uniformMatrix4fv(u_camera, false, cameraMatrix);
-    gl.uniformMatrix4fv(u_modelView, false, modelView);
+    gl.uniformMatrix4fv(u_projection, false, camera.projectionMatrix.elements);
+    gl.uniformMatrix4fv(u_camera, false, camera.matrixWorldInverse.elements);
+    gl.uniformMatrix4fv(u_modelView, false, new Matrix4().elements);
     gl.drawArrays(gl.TRIANGLES, 0, 16 * 6);
   }
 }
 
-function generateSkyBox() {
-  const faceInfos = [
-    {
-      target: gl.TEXTURE_CUBE_MAP_POSITIVE_X,
-      faceColor: '#F00',
-      textColor: '#0FF',
-      text: '+X',
-    },
-    {
-      target: gl.TEXTURE_CUBE_MAP_NEGATIVE_X,
-      faceColor: '#FF0',
-      textColor: '#00F',
-      text: '-X',
-    },
-    {
-      target: gl.TEXTURE_CUBE_MAP_POSITIVE_Y,
-      faceColor: '#0F0',
-      textColor: '#F0F',
-      text: '+Y',
-    },
-    {
-      target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Y,
-      faceColor: '#0FF',
-      textColor: '#F00',
-      text: '-Y',
-    },
-    {
-      target: gl.TEXTURE_CUBE_MAP_POSITIVE_Z,
-      faceColor: '#00F',
-      textColor: '#FF0',
-      text: '+Z',
-    },
-    {
-      target: gl.TEXTURE_CUBE_MAP_NEGATIVE_Z,
-      faceColor: '#F0F',
-      textColor: '#0F0',
-      text: '-Z',
-    },
-  ];
-  faceInfos.forEach((faceInfo) => {
-    const { target, faceColor, textColor, text } = faceInfo;
-
-    // Upload the canvas to the cubemap face.
-    const level = 0;
-    const internalFormat = gl.RGBA;
-    const format = gl.RGBA;
-    const type = gl.UNSIGNED_BYTE;
-    gl.texImage2D(target, level, internalFormat, format, type, new Image());
-  });
-}
-
 function animate(time: number) {
   requestAnimationFrame(animate);
-  renderScene(perspectiveMatrix);
-
-  const position = vec3.clone(cameraPosition);
-  const distance = vec3.length(position);
-
-  const x = Math.cos(time / 1000) * distance;
-  const y = Math.sin(time / 1000) * distance;
-  const z = position[2];
-  mat4.lookAt(cameraMatrix, [x, y, z], [0, 0, 0], [0, -1, 0]);
+  renderScene(Camera);
 }
 requestAnimationFrame(animate);
 
-const gui = new GUI();
-
-gui
-  .add({ cameraX: Math.PI / 2 }, 'cameraX', 0, Math.PI * 2)
-  .onChange((val: number) => {
-    mat4.rotateX(modelView, mat4.create(), val);
-    // cameraPosition[0] = val;
-    // mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
-  }); // checkbox
-gui
-  .add({ cameraY: Math.PI / 2 }, 'cameraY', 0, Math.PI * 2)
-  .onChange((val: number) => {
-    mat4.rotateY(modelView, mat4.create(), val);
-    // cameraPosition[1] = val;
-    // mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
-  }); // checkbox
-gui
-  .add({ cameraZ: Math.PI / 2 }, 'cameraZ', 0, Math.PI * 2)
-  .onChange((val: number) => {
-    mat4.rotateZ(modelView, mat4.create(), val);
-    // cameraPosition[2] = val;
-    // mat4.lookAt(cameraMatrix, cameraPosition, [0, 0, 0], [0, -1, 0]);
-  }); // checkbox
+control.addEventListener('change', () => {});
