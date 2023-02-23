@@ -9,6 +9,5 @@ uniform mat4 u_modelView;
 
 
 void main() {
-  // Multiply the position by the matrix.
   gl_Position = u_projection * u_camera * u_modelView * a_position;
 }

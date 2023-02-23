@@ -11,7 +11,6 @@ attribute vec3 a_color;
 varying vec3 v_color;
 
 void main() {
-  // Multiply the position by the matrix.
   gl_Position = u_projection * u_camera * u_modelView * a_position;
   v_color = a_color;
 }

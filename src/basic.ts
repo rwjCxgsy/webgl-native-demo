@@ -73,7 +73,7 @@ vec3.create();
 
 // 添加灯光
 const baseLight = new Light([0.3, 0.3, 0.3], 'base');
-let pointLight = new Light([1, 1, 1], 'point', [0, -20, 200]);
+let pointLight = new Light([1, 1, 1], 'point', [-5, -5, 200]);
 
 let pro = mat4.create();
 mat4.perspective(
@@ -133,8 +133,8 @@ const _camera: Camera = {
 function animate(time: number) {
   requestAnimationFrame(animate);
 
-  const x = Math.sin((Math.PI / 180) * (time / 20)) * 100;
-  const z = Math.cos((Math.PI / 180) * (time / 20)) * 100;
+  const x = Math.sin((Math.PI / 180) * (time / 20)) * 150;
+  const z = Math.cos((Math.PI / 180) * (time / 20)) * 150;
 
   pointLight.position![0] = x;
   pointLight.position![2] = z;
@@ -158,41 +158,16 @@ gui.add({ aspect: 65 }, 'aspect', 40, 90, 1).onChange((e: number) => {
   );
 });
 
-gui.add({ x: 45 }, 'x', 0, 180, 2).onChange((e: number) => {
-  const rag = (Math.PI / 180) * e;
-
-  const [x, y, z] = cameraPosition;
-  const distance = Math.sqrt(y ** 2 + z ** 2);
-
-  const _y = Math.sin(rag) * distance;
-  const _z = Math.cos(rag) * distance;
-
-  mat4.lookAt(view, [x, _y, _z], [0, 0, 0], [0, 1, 0]);
+gui.add({ x: 0 }, 'x', 0, 180, 2).onChange((e: number) => {
+  meshF.rotateX(e);
 });
 
-gui.add({ y: 45 }, 'y', 0, 180, 2).onChange((e: number) => {
-  const rag = (Math.PI / 180) * e;
-
-  const [x, y, z] = cameraPosition;
-  const distance = Math.sqrt(x ** 2 + z ** 2);
-
-  const _x = Math.cos(rag) * distance;
-  const _z = Math.sin(rag) * distance;
-
-  mat4.lookAt(view, [_x, y, _z], [0, 0, 0], [0, 1, 0]);
+gui.add({ y: 0 }, 'y', 0, 180, 2).onChange((e: number) => {
+  meshF.rotateY(e);
 });
 
-gui.add({ z: 45 }, 'z', 0, 90, 2).onChange((e) => {
-  const rag = (Math.PI / 180) * e;
-
-  const [x, y, z] = view.slice(12);
-
-  const distance = Math.sqrt(x ** 2 + y ** 2 + z ** 2);
-
-  const _x = Math.sin(rag) * distance;
-  const _Y = Math.cos(rag) * distance;
-
-  mat4.lookAt(view, [_x, _Y, z], [0, 0, 0], [0, 1, 0]);
+gui.add({ z: 0 }, 'z', 0, 90, 2).onChange((e) => {
+  meshF.rotateZ(e);
 });
 
 gui.add({ lightX: 45 }, 'lightX', -90, 90, 10).onChange((e) => {

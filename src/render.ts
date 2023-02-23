@@ -51,6 +51,10 @@ export class Object3D {
   public modelView: mat4 = mat4.create();
   public position: vec3 = vec3.create();
 
+  public xRotate: number = 0;
+  public yRotate: number = 0;
+  public zRotate: number = 0;
+
   constructor(
     public shader: Shaders,
     public data: EntityData,
@@ -60,13 +64,33 @@ export class Object3D {
   }
 
   transform() {
-    const m4 = mat4.create();
+    const translate = mat4.create();
 
-    mat4.translate(this.modelView, mat4.create(), this.position);
+    mat4.translate(translate, mat4.create(), this.position);
+
+    const rotateXyz = mat4.create();
+    mat4.rotateX(rotateXyz, mat4.create(), this.xRotate);
+    mat4.rotateY(rotateXyz, rotateXyz, this.yRotate);
+    mat4.rotateZ(rotateXyz, rotateXyz, this.zRotate);
+
+    mat4.multiply(this.modelView, rotateXyz, translate);
   }
 
   setPosition(position: vec3) {
     this.position = position;
+    this.transform();
+  }
+
+  rotateX(radius: number) {
+    this.xRotate = (Math.PI / 180) * radius;
+    this.transform();
+  }
+  rotateY(radius: number) {
+    this.yRotate = (Math.PI / 180) * radius;
+    this.transform();
+  }
+  rotateZ(radius: number) {
+    this.zRotate = (Math.PI / 180) * radius;
     this.transform();
   }
 }
