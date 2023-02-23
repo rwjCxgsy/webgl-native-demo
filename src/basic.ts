@@ -1,22 +1,34 @@
 import * as wordF from './geometry/f';
-import * as skyBox from './geometry/box';
+import { getBoxGeometry } from './geometry/box';
 import fs from './shader/shader.fs.glsl?raw';
 import vs from './shader/shader.vs.glsl?raw';
-import skyBoxVs from './shader/skybox/shader.vs.glsl?raw';
-import skyBoxFs from './shader/skybox/shader.fs.glsl?raw';
-import { createPlane } from './geometry/plane';
-import { createShaderProgram, getLocation } from './program';
+import boxVs from './shader/u_color/shader.vs.glsl?raw';
+import boxFs from './shader/u_color/shader.fs.glsl?raw';
+
+import lineVs from './shader/a_color/shader.vs.glsl?raw';
+import lineFs from './shader/a_color/shader.fs.glsl?raw';
+
+import { getAxis } from './geometry/axis';
 
 import { mat4, vec3 } from 'gl-matrix';
 
 import './index.css';
 
 import GUI from 'lil-gui';
+import { renderScene, Object3D, Camera, Light } from './render';
 
 const gui = new GUI();
 
+function createVec3(a: number, b: number, c: number) {
+  const out = vec3.create();
+  vec3.set(out, a, b, c);
+  return out;
+}
+
 const canvas = document.querySelector('#root') as HTMLCanvasElement;
 const gl = canvas.getContext('webgl', { antialias: true })!;
+
+console.log(gl.TRIANGLES, gl.LINES);
 function initCanvas() {
   canvas.width =
     (window.innerWidth || document.documentElement.clientWidth) *
@@ -31,8 +43,6 @@ function initCanvas() {
 }
 
 initCanvas();
-
-const program = createShaderProgram(gl, vs, fs);
 
 // 字母F
 
@@ -55,32 +65,15 @@ let outPosition = new Float32Array(wordF.vertexes.slice());
     outPosition[ii + 2] = out[2];
   }
 }
-const entityWordF = getLocation(gl, program, {
-  attribute: {
-    normal: wordF.normals,
-    position: outPosition,
-    color: wordF.colors,
-  },
-});
-
-// 发光源相关参数
-
-// 光相关参数
-const u_lightColor = gl.getUniformLocation(program, 'u_lightColor');
-const u_lightPosition = gl.getUniformLocation(program, 'u_lightPosition');
-
-const u_cameraPosition = gl.getUniformLocation(program, 'u_cameraPosition');
-
-console.log(u_lightColor, u_lightPosition, u_cameraPosition);
 
 // 相机位置
-let cameraPosition: vec3 = [0, 0, 400];
+let cameraPosition: vec3 = [0, 0, 600];
+
+vec3.create();
 
 // 添加灯光
-let pointLight = {
-  position: [50, 50, 100],
-  color: [0.3, 0.6, 1],
-};
+const baseLight = new Light([0.3, 0.3, 0.3], 'base');
+let pointLight = new Light([1, 1, 1], 'point', [0, -20, 200]);
 
 let pro = mat4.create();
 mat4.perspective(
@@ -94,66 +87,61 @@ mat4.perspective(
 let view = mat4.create();
 mat4.lookAt(view, cameraPosition, [0, 0, 0], [0, 1, 0]);
 
-console.log(pro, view);
+const scene: Set<Object3D> = new Set();
 
-function render() {
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+const meshF = new Object3D([vs, fs], {
+  attributes: {
+    position: outPosition,
+    color: wordF.colors,
+    normals: wordF.normals,
+  },
+});
 
-  gl.enable(gl.DEPTH_TEST);
+const MeshLight = new Object3D(
+  [boxVs, boxFs],
+  {
+    attributes: {
+      position: getBoxGeometry(5),
+    },
+    uniforms: {
+      color: pointLight.color,
+    },
+  },
+  gl.TRIANGLES
+);
 
-  gl.useProgram(program);
+MeshLight.setPosition(pointLight.position);
 
-  // 传输顶点数据
-  gl.enableVertexAttribArray(entityWordF.locations.a_position);
-  gl.bindBuffer(gl.ARRAY_BUFFER, entityWordF.buffers.position!);
-  gl.vertexAttribPointer(
-    entityWordF.locations.a_position,
-    3,
-    gl.FLOAT,
-    false,
-    0,
-    0
-  );
+const MeshAxis = new Object3D(
+  [lineVs, lineFs],
+  {
+    attributes: getAxis(500),
+  },
+  gl.LINES
+);
 
-  gl.enableVertexAttribArray(entityWordF.locations.a_color);
-  gl.bindBuffer(gl.ARRAY_BUFFER, entityWordF.buffers.color!);
-  gl.vertexAttribPointer(
-    entityWordF.locations.a_color,
-    3,
-    gl.FLOAT,
-    false,
-    0,
-    0
-  );
+scene.add(meshF);
+scene.add(MeshLight);
+scene.add(MeshAxis);
 
-  gl.enableVertexAttribArray(entityWordF.locations.a_normal);
-  gl.bindBuffer(gl.ARRAY_BUFFER, entityWordF.buffers.normal!);
-  gl.vertexAttribPointer(
-    entityWordF.locations.a_normal,
-    3,
-    gl.FLOAT,
-    false,
-    0,
-    0
-  );
-
-  gl.uniformMatrix4fv(entityWordF.locations.u_projection, false, pro);
-  gl.uniformMatrix4fv(entityWordF.locations.u_camera, false, view);
-
-  gl.uniformMatrix4fv(entityWordF.locations.u_modelView, false, mat4.create());
-
-  gl.uniform3fv(u_lightColor, new Float32Array(pointLight.color));
-  gl.uniform3fv(u_lightPosition, new Float32Array(pointLight.position));
-
-  gl.drawArrays(gl.TRIANGLES, 0, 16 * 6);
-}
+const _camera: Camera = {
+  projection: pro,
+  view: view,
+  position: cameraPosition,
+};
 
 function animate(time: number) {
   requestAnimationFrame(animate);
 
-  render();
+  const x = Math.sin((Math.PI / 180) * (time / 20)) * 100;
+  const z = Math.cos((Math.PI / 180) * (time / 20)) * 100;
+
+  pointLight.position![0] = x;
+  pointLight.position![2] = z;
+
+  MeshLight.setPosition(pointLight.position);
+
+  renderScene(gl, _camera, scene, [baseLight, pointLight]);
 }
 
 requestAnimationFrame(animate);
@@ -203,8 +191,6 @@ gui.add({ z: 45 }, 'z', 0, 90, 2).onChange((e) => {
 
   const _x = Math.sin(rag) * distance;
   const _Y = Math.cos(rag) * distance;
-
-  console.log(_x, _Y, z);
 
   mat4.lookAt(view, [_x, _Y, z], [0, 0, 0], [0, 1, 0]);
 });

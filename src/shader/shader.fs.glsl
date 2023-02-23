@@ -6,8 +6,10 @@ varying vec4 v_color;
 
 varying vec3 v_normal;
 
-
+// 灯光颜色
 uniform vec3 u_lightColor;
+// 环境光颜色
+uniform vec3 u_baseLightColor;
 
 
 varying vec3 v_fragToLight;
@@ -23,8 +25,10 @@ void main() {
    // gl_FragColor = vec4(v_normal, 1.0);
 
    // 计算漫反射
-   float light = dot(v_normal, v_fragToLight);
+   float light1 = dot(v_normal, v_fragToLight);
 
-   vec3 baseLight = vec3(0.3, 0.3, 0.3);
-   gl_FragColor = vec4(baseLight + vec3(v_color) * light, 1.0);
+   float light2 = dot(v_normal, v_fragToCamera);
+
+   // gl_FragColor = vec4(0.0, light2, 0.0, 1.0);
+   gl_FragColor = vec4(vec3(0.4, 0.4, 0.4) + vec3(v_color) * light1, 1.0);
 }

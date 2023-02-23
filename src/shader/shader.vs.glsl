@@ -30,11 +30,15 @@ void main() {
 
   // Pass the color to the fragment shader.
   v_color = vec4(a_color.xyz/255.0, 1.0);
+
+
+
   v_normal = normalize(mat3(u_camera) * a_normal);
 
 
 
-  vec4 position = u_projection * u_modelView * a_position;
+  // 转换后的世界坐标位置
+  vec4 position = u_modelView * a_position;
 
 
   // 计算点到灯光向量
