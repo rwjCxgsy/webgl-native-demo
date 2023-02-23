@@ -1,5 +1,6 @@
 import * as wordF from './geometry/f';
 import { getBoxGeometry } from './geometry/box';
+import { getSphere } from './geometry/sphere';
 import fs from './shader/shader.fs.glsl?raw';
 import vs from './shader/shader.vs.glsl?raw';
 import boxVs from './shader/u_color/shader.vs.glsl?raw';
@@ -97,6 +98,18 @@ const meshF = new Object3D([vs, fs], {
   },
 });
 
+console.log(getSphere(100));
+const MeshSphere = new Object3D(
+  [boxVs, boxFs],
+  {
+    attributes: getSphere(300),
+    uniforms: {
+      color: pointLight.color,
+    },
+  },
+  gl.TRIANGLE_FAN
+);
+
 const MeshLight = new Object3D(
   [boxVs, boxFs],
   {
@@ -121,6 +134,8 @@ const MeshAxis = new Object3D(
 );
 
 scene.add(meshF);
+
+// scene.add(MeshSphere);
 scene.add(MeshLight);
 scene.add(MeshAxis);
 
