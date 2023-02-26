@@ -1,3 +1,7 @@
+import { Object3D } from './../eneity/index';
+import fs from '../shader/shader.fs.glsl?raw';
+import vs from '../shader/shader.vs.glsl?raw';
+import { mat4, vec3 } from 'gl-matrix';
 var vertexes = new Float32Array([
   // left column front
   0, 0, 0, 0, 150, 0, 30, 0, 0, 0, 150, 0, 30, 150, 0, 30, 0, 0,
@@ -161,6 +165,33 @@ var normals = new Float32Array([
   -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
 ]);
 
-console.log(colors.length, normals.length);
+class MeshF extends Object3D {
+  constructor() {
+    let outPosition = new Float32Array(vertexes.slice());
+    var matrix = mat4.create();
+    mat4.rotateX(matrix, mat4.create(), Math.PI);
+    mat4.translate(matrix, matrix, [-50, -75, -15]);
 
-export { colors, vertexes, normals };
+    for (var ii = 0; ii < vertexes.length; ii += 3) {
+      const out = vec3.create();
+      const point = vec3.create();
+      point[0] = vertexes[ii + 0];
+      point[1] = vertexes[ii + 1];
+      point[2] = vertexes[ii + 2];
+      vec3.transformMat4(out, point, matrix);
+      outPosition[ii + 0] = out[0];
+      outPosition[ii + 1] = out[1];
+      outPosition[ii + 2] = out[2];
+    }
+
+    super([vs, fs], {
+      attributes: {
+        position: outPosition,
+        color: colors,
+        normals: normals,
+      },
+    });
+  }
+}
+
+export { MeshF };

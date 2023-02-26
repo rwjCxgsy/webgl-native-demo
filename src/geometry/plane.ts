@@ -1,19 +1,25 @@
-const data = [-0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5];
+import { mat4, vec3 } from 'gl-matrix';
+import { Geometry } from './geometry';
+import { createPlaneVertices } from '../utils/geometry';
 
-export function createPlane(x: number = 1, y: number = 1): Float32Array {
-  const data = [
-    -0.5 * x,
-    0.5 * y,
-    -0.5 * x,
-    -0.5 * y,
-    0.5 * x,
-    0.5 * y,
-    -0.5 * x,
-    -0.5 * y,
-    0.5 * x,
-    -0.5 * y,
-    0.5 * x,
-    0.5 * y,
-  ];
-  return new Float32Array(data);
+class PlaneGeometry extends Geometry {
+  constructor(
+    width: number = 10,
+    depth: number = 10,
+    subdivisionsWidth: number = 1,
+    subdivisionsDepth: number = 1,
+    matrix: mat4 = mat4.create()
+  ) {
+    super(
+      createPlaneVertices(
+        width,
+        depth,
+        subdivisionsWidth,
+        subdivisionsDepth,
+        matrix
+      )
+    );
+  }
 }
+
+export { PlaneGeometry };

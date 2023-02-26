@@ -1,27 +1,11 @@
-function getBoxGeometry(size: number = 1) {
-  const base = [
-    -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5,
-    0.5, -0.5, 0.5, -0.5, -0.5,
+import { mat4, vec3 } from 'gl-matrix';
+import { Geometry } from './geometry';
+import { createCubeVertices } from '../utils/geometry';
 
-    -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5,
-    0.5, 0.5, 0.5, 0.5,
-
-    -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5,
-    0.5, 0.5, 0.5, -0.5,
-
-    -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5,
-    -0.5, -0.5, 0.5, -0.5, 0.5,
-
-    -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5,
-    0.5, 0.5, -0.5, 0.5, -0.5,
-
-    0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5,
-    -0.5, 0.5, 0.5, 0.5,
-  ].map((v) => {
-    return v * size;
-  });
-
-  return new Float32Array(base);
+class CubeGeometry extends Geometry {
+  constructor(size: number = 10) {
+    super(createCubeVertices(size));
+  }
 }
 
-export { getBoxGeometry };
+export { CubeGeometry };
