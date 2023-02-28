@@ -19,6 +19,7 @@ export class Material {
     option: Options = {}
   ) {
     Object.entries(option).forEach(([key, value]) => {
+      // @ts-ignore
       this[key] = value;
     });
   }

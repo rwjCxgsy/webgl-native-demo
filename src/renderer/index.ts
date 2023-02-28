@@ -331,6 +331,7 @@ class Renderer {
 
       gl.drawElements(
         gl.TRIANGLES,
+        // @ts-ignore
         obj.geometry.indices!.length,
         gl.UNSIGNED_SHORT,
         0
@@ -420,6 +421,7 @@ class Renderer {
 
     gl.drawElements(
       gl.LINES,
+      // @ts-ignore
       this.frustumEntity.geometry.indicesLength,
       gl.UNSIGNED_SHORT,
       0

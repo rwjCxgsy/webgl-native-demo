@@ -16,7 +16,7 @@ import GUI from 'lil-gui';
 import { Renderer } from './renderer';
 import { Object3D } from './eneity';
 import { AmbientLight, PointLight } from './light/light';
-import { AxisHelper } from './geometry/axis';
+
 import { TextureImage2D } from './texture';
 
 import { SphereGeometry } from './geometry/sphere';
@@ -86,6 +86,7 @@ function loadHighMap() {
     const { normal, heightY } = getNormalByHighMap(image, 100, 100);
     geometry.attr.normal = new Float32Array(normal);
     heightY.forEach((val: number, index) => {
+      // @ts-ignore
       geometry.attr.position[index * 3 + 1] = val;
     });
 

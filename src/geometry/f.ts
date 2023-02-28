@@ -184,6 +184,7 @@ class MeshF extends Object3D {
       outPosition[ii + 2] = out[2];
     }
 
+    // @ts-ignore
     super([vs, fs], {
       attributes: {
         position: outPosition,

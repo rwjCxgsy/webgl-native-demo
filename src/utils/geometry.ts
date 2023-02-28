@@ -54,8 +54,11 @@ function createSphereVertices(
       const ux = cosTheta * sinPhi;
       const uy = cosPhi;
       const uz = sinTheta * sinPhi;
+      // @ts-ignore
       positions.push(radius * ux, radius * uy, radius * uz);
+      // @ts-ignore
       normals.push(ux, uy, uz);
+      // @ts-ignore
       texCoords.push(1 - u, v);
     }
   }
@@ -68,14 +71,13 @@ function createSphereVertices(
   );
   for (let x = 0; x < subdivisionsAxis; x++) {
     for (let y = 0; y < subdivisionsHeight; y++) {
-      // Make triangle 1 of quad.
+      // @ts-ignore
       indices.push(
         (y + 0) * numVertsAround + x,
         (y + 0) * numVertsAround + x + 1,
         (y + 1) * numVertsAround + x
       );
-
-      // Make triangle 2 of quad.
+      // @ts-ignore
       indices.push(
         (y + 1) * numVertsAround + x,
         (y + 0) * numVertsAround + x + 1,
@@ -137,13 +139,18 @@ function createCubeVertices(size: number = 10) {
 
       // Each face needs all four vertices because the normals and texture
       // coordinates are not all the same.
+      // @ts-ignore
       positions.push(position);
+      // @ts-ignore
       normals.push(normal);
+      // @ts-ignore
       texCoords.push(uv);
     }
     // Two triangles make a square face.
     const offset = 4 * f;
+    // @ts-ignore
     indices.push(offset + 0, offset + 1, offset + 2);
+    // @ts-ignore
     indices.push(offset + 0, offset + 2, offset + 3);
   }
 
@@ -184,8 +191,11 @@ function createPlaneVertices(
     for (let x = 0; x <= subdivisionsWidth; x++) {
       const u = x / subdivisionsWidth;
       const v = z / subdivisionsDepth;
+      // @ts-ignore
       positions.push(width * u - width * 0.5, 0, depth * v - depth * 0.5);
+      // @ts-ignore
       normals.push(0, 1, 0);
+      // @ts-ignore
       texcoords.push(u, v);
     }
   }
@@ -200,6 +210,7 @@ function createPlaneVertices(
   for (let z = 0; z < subdivisionsDepth; z++) {
     for (let x = 0; x < subdivisionsWidth; x++) {
       // Make triangle 1 of quad.
+      // @ts-ignore
       indices.push(
         (z + 0) * numVertsAcross + x,
         (z + 1) * numVertsAcross + x,
@@ -207,6 +218,7 @@ function createPlaneVertices(
       );
 
       // Make triangle 2 of quad.
+      // @ts-ignore
       indices.push(
         (z + 1) * numVertsAcross + x,
         (z + 1) * numVertsAcross + x + 1,

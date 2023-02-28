@@ -14,7 +14,7 @@ export class Geometry {
 
     delete attributes.indices;
     this.attr = attributes;
-
+    // @ts-ignore
     this.indicesLength = this.indices.length;
   }
 }

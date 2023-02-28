@@ -25,6 +25,8 @@ class Control {
   onmousedown = (event: MouseEvent) => {
     event.preventDefault(); // 阻止浏览器默认事件，重要
     //如果鼠标在<canvas>内开始移动
+
+    // @ts-ignore
     if (event.target.tagName == 'CANVAS') {
       this.params.lastClickX = event.clientX;
       this.params.lastClickY = event.clientY;
