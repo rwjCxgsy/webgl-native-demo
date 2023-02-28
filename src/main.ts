@@ -132,7 +132,7 @@ sky.name = 'sky';
 scene.add(sky);
 
 const water = new Entity(
-  new PlaneGeometry(400, 400),
+  new PlaneGeometry(1000, 1000),
   new ShaderMaterial(waterVs, waterFs, {
     color: 0x3366ff,
     textures: [new TextureImage2D(water_nrmUrl)],
