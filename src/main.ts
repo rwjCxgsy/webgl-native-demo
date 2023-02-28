@@ -43,6 +43,26 @@ import c_url from '/assets/texture/mountain/bigRockFace.png';
 import d_url from '/assets/texture/mountain/grayRock.png';
 import e_url from '/assets/texture/mountain/hardDirt.png';
 import f_url from '/assets/texture/mountain/shortGrass.png';
+// import girl from './assets/racer_anime_girl.glb';
+
+// import { load } from '@loaders.gl/core';
+// import { GLBLoader } from '@loaders.gl/gltf';
+
+// const data = await load('racer_anime_girl.glb', GLBLoader);
+
+// console.log(data);
+
+// const chunk = data.binChunks[0].arrayBuffer.slice(27096);
+
+// const { byteLength, byteOffset } = data.json.bufferViews[3];
+// const imageData = chunk.slice(byteOffset, byteOffset + byteLength);
+
+// var blob = new Blob([imageData], { type: 'image/png' });
+// var imageUrl = (window.URL || window.webkitURL).createObjectURL(blob);
+// const image = new Image();
+// image.src = imageUrl;
+
+// document.body.append(image);
 
 (window as any).Vector3 = Vector3;
 
@@ -66,6 +86,39 @@ const baseLight = new AmbientLight([1, 1, 1]);
 const pointLight = new PointLight([1, 1, 1], [10, 80, 10]);
 
 const scene: Set<Object3D> = new Set();
+
+const entityList: Set<Object3D> = new Set();
+
+{
+  for (let i = 0; i < 50; i++) {
+    const entity = new Entity(
+      new SphereGeometry(((Math.random() * 5) | 0) + 3, 32, 16),
+      new StandardMaterial({
+        color: (Math.random() * 0xffffff) | 0,
+      })
+    );
+    const x = Math.random() * 100 - 55;
+    const y = Math.random() * 50 + 10;
+    const z = Math.random() * 100 - 50;
+    entity.setPosition([x, y, z]);
+    scene.add(entity);
+    entityList.add(entity);
+  }
+  for (let i = 0; i < 50; i++) {
+    const entity = new Entity(
+      new CubeGeometry(((Math.random() * 5) | 0) + 3),
+      new StandardMaterial({
+        color: (Math.random() * 0xffffff) | 0,
+      })
+    );
+    const x = Math.random() * 100 - 55;
+    const y = Math.random() * 50 + 10;
+    const z = Math.random() * 100 - 50;
+    entity.setPosition([x, y, z]);
+    scene.add(entity);
+    entityList.add(entity);
+  }
+}
 
 // 天空穹
 const sky = new Entity(
@@ -116,7 +169,7 @@ function loadHighMap() {
 
     mountain.name = '山';
 
-    scene.add(mountain);
+    // scene.add(mountain);
   };
   image.src = '/assets/texture/mountain/default.png';
 }
@@ -146,9 +199,15 @@ function animate(time: number) {
 
   water.material.time = time;
 
+  entityList.forEach((entity) => {
+    entity.xRotate += 0.01;
+    entity.yRotate += 0.02;
+    entity.zRotate += 0.03;
+  });
+
   renderer.renderShadowTexture(scene, [baseLight, pointLight]);
   renderer.render(camera, scene, [baseLight, pointLight]);
-  // renderer.renderFrustum(camera);
+  renderer.renderFrustum(camera);
 }
 
 requestAnimationFrame(animate);

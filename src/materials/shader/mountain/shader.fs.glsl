@@ -45,7 +45,7 @@ void main(){
 
 
 
-     float u_bias = 0.0000001;
+     float u_bias = -0.001;
    
   vec3 projectedTexcoord=v_projectedTexcoord.xyz/v_projectedTexcoord.w;
     float currentDepth=projectedTexcoord.z + u_bias;
@@ -61,6 +61,8 @@ void main(){
     vec2 uv = (vec2(projectedTexcoord.xy) + 1.0) / 2.0; 
     float projectedDepth=texture2D(u_projectedTexture,uv.xy).r;
     float shadowLight=(inRange && projectedDepth <= currentDepth) ? 0.5 : 1.0;
+
+    shadowLight = 1.0;
 
   // 如果在投影中 则 减少光亮 
   
