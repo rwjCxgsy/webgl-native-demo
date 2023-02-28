@@ -167,8 +167,8 @@ function caleNormalVector(yArray) {
 }
 
 function getNormalByHighMap(image, width, height) {
-  var LAND_HIGHEST = 48;
-  var LAND_HIGH_ADJUST = -12;
+  var LAND_HIGHEST = 98;
+  var LAND_HIGH_ADJUST = -40;
   var result = new Array();
   var result1 = new Array();
   const heightY = new Array();
@@ -194,7 +194,6 @@ function getNormalByHighMap(image, width, height) {
     }
   }
 
-  ctx.drawImage(image, 0, 0, width, height);
   getgray();
   for (var i = 0; i < height; i++) {
     result[i] = new Array();

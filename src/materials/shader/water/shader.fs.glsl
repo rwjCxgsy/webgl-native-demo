@@ -4,7 +4,7 @@ uniform vec3 u_color;
 uniform sampler2D u_texture0;
 
 // 深度纹理
-uniform sampler2D u_texture1;
+uniform sampler2D u_projectedTexture;
 
 uniform float u_bias;
 
@@ -30,29 +30,33 @@ varying vec3 v_normal;
 
 varying vec4 v_projectedTexcoord;
 
+uniform float u_isRenderShadowTexture;
+
+varying float v_fogDepth;
+
 void main(){
    
    // 水的颜色
-   vec3 warerColor=vec3(.2,.6,.7961);
+   vec3 warerColor=vec3(0.0002, 0.472, 0.619);
+     float u_bias = 0.0001;
+   
+  vec3 projectedTexcoord=v_projectedTexcoord.xyz/v_projectedTexcoord.w;
+    float currentDepth=projectedTexcoord.z + u_bias;
+    
+    bool inRange=
+    projectedTexcoord.x>=-1.0 &&
+    projectedTexcoord.x<=1.&&
+    projectedTexcoord.y>=-1.0 &&
+    projectedTexcoord.y<=1.;
+    
+    // the 'r' channel has the depth values
 
-
-
-  vec3 projectedTexcoord = v_projectedTexcoord.xyz / v_projectedTexcoord.w;
-  float currentDepth = projectedTexcoord.z + u_bias;
-
-  bool inRange =
-      projectedTexcoord.x >= 0.0 &&
-      projectedTexcoord.x <= 1.0 &&
-      projectedTexcoord.y >= 0.0 &&
-      projectedTexcoord.y <= 1.0;
-
-  // the 'r' channel has the depth values
-  float projectedDepth = texture2D(u_texture1, projectedTexcoord.xy).r;
-  bool shaodow = (inRange && projectedDepth <= currentDepth);
-  float shadowLight = shaodow ? 0.5 : 1.0;
-
-  // 如果在投影中 则 减少光亮 
-  
+    vec2 uv = (vec2(projectedTexcoord.xy) + 1.0) / 2.0; 
+    float projectedDepth=texture2D(u_projectedTexture,uv.xy).r;
+    float shadowLight=(inRange && projectedDepth <= currentDepth) ? 0.5 : 1.0;
+      
+   
+   // 如果在投影中 则 减少光亮
    
    vec3 toLight=normalize(v_fragToLight);
    vec3 toView=normalize(v_fragToCamera);
@@ -68,33 +72,29 @@ void main(){
    // normal = vec3(0.0, 1.0, 0.0);
    
    // 环境光 50%
-   vec4 ambient=vec4(warerColor*u_baseLightColor,1.);
+   vec4 ambient=vec4(warerColor*u_baseLightColor * 0.77 * shadowLight,1.);
    
    // // 漫反射
-   float diffuseAmt=dot(toLight,normal);
+   float diffuseAmt=max(dot(toLight,normal), 0.0);
    // // 模型颜色 *
-   vec4 diffuse=vec4(warerColor*u_lightColor *.2*diffuseAmt,1.);
+   vec4 diffuse=vec4(warerColor*u_lightColor*.23*diffuseAmt,1.);
    
    vec3 halfVector=normalize(toView+toLight);
    float light=max(dot(normal,toView),0.);
    float specular=0.;
    
-   if(light>0. && !shaodow){
-      specular=pow(dot(normal,halfVector),512.);
+   if(light>0.&&shadowLight==1.){
+      specular=pow(max(dot(normal,halfVector), 0.0),512.);
    }
    
-   vec4 specularColor=vec4(u_lightColor.rgb * specular,1.);
+   vec4 specularColor=vec4(u_lightColor.rgb*specular,1.);
    
-   
-   vec4 frag =ambient+diffuse+specularColor;
-  gl_FragColor = vec4(frag.rgb * shadowLight, frag.a);
+   vec4 frag=ambient+diffuse+specularColor;
+
+         vec4 u_fogColor = vec4(1.0, 1.0, 1.0, 1.0);
+        float fogAmount = smoothstep(180.0, 300.0, v_fogDepth);
 
 
-// 
-
-
-
-
-
+   gl_FragColor= mix(frag, u_fogColor, fogAmount);
 
 }

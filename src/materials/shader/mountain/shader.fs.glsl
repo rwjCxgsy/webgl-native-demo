@@ -24,7 +24,6 @@ varying vec3 v_fragToCamera;
 
 // varying mat3 TBN;
 
-varying vec3 v_color;
 varying vec2 v_uv;
 varying vec2 v_uv2;
 
@@ -46,18 +45,22 @@ void main(){
 
 
 
-  vec3 projectedTexcoord = v_projectedTexcoord.xyz / v_projectedTexcoord.w;
-  float currentDepth = projectedTexcoord.z + u_bias;
+     float u_bias = 0.0000001;
+   
+  vec3 projectedTexcoord=v_projectedTexcoord.xyz/v_projectedTexcoord.w;
+    float currentDepth=projectedTexcoord.z + u_bias;
+    
+    bool inRange=
+    projectedTexcoord.x>=-1.0 &&
+    projectedTexcoord.x<=1.&&
+    projectedTexcoord.y>=-1.0 &&
+    projectedTexcoord.y<=1.;
+    
+    // the 'r' channel has the depth values
 
-  bool inRange =
-      projectedTexcoord.x >= 0.0 &&
-      projectedTexcoord.x <= 1.0 &&
-      projectedTexcoord.y >= 0.0 &&
-      projectedTexcoord.y <= 1.0;
-
-  // the 'r' channel has the depth values
-  float projectedDepth = texture2D(u_texture0, projectedTexcoord.xy).r;
-  float shadowLight = (inRange && projectedDepth <= currentDepth) ? 0.5 : 1.0;
+    vec2 uv = (vec2(projectedTexcoord.xy) + 1.0) / 2.0; 
+    float projectedDepth=texture2D(u_projectedTexture,uv.xy).r;
+    float shadowLight=(inRange && projectedDepth <= currentDepth) ? 0.5 : 1.0;
 
   // 如果在投影中 则 减少光亮 
   
@@ -106,12 +109,12 @@ void main(){
   vec3 color = (color_bigRock + color_rock + color_hardDirt + color_grass + baseColor - 0.5).rgb;
 
    // 环境光 50%
-   vec4 ambient=vec4(color*u_baseLightColor,1.);
+   vec4 ambient=vec4(color*u_baseLightColor * (shadowLight - 0.4),1.);
    
    // // 漫反射
    float diffuseAmt=dot(toLight,normal);
    // // 模型颜色 *
-   vec4 diffuse=vec4(color*u_lightColor *.2*diffuseAmt,1.);
+   vec4 diffuse=vec4(color*u_lightColor *.6*diffuseAmt,1.);
    
    vec3 halfVector=normalize(toView+toLight);
    float light=max(dot(normal,toView),0.);

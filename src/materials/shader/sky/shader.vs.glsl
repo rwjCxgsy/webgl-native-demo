@@ -21,10 +21,14 @@ varying vec3 v_normal;
 
 varying vec2 v_texcoord;
 
+varying float v_fogDepth;
+
 void main() {
   gl_Position = u_projection * u_camera * u_modelView * a_position;
 
   v_normal = a_normal;
 
   v_texcoord = a_texcoord;
+
+  v_fogDepth = -(u_camera * a_position).z;
 }

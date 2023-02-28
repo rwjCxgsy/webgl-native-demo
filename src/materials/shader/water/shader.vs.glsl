@@ -43,6 +43,8 @@ uniform mat4 u_textureMatrix;
 varying vec4 v_projectedTexcoord;
 
 
+varying float v_fogDepth;
+
 void main() {
 
   vec4 worldPosition = u_modelView * a_position;
@@ -77,4 +79,7 @@ void main() {
   v_projectedTexcoord = u_textureMatrix * worldPosition;
 
   v_normal = a_normal;
+
+
+  v_fogDepth = -(u_camera * a_position).z;
 }

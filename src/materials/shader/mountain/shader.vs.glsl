@@ -2,7 +2,6 @@
 
 attribute vec4 a_position;
 attribute vec3 a_normal;
-attribute vec3 a_color;
 attribute vec2 a_texcoord;
 
 uniform mat4 u_projection;
@@ -19,7 +18,6 @@ uniform vec3 u_cameraPosition;
 
 uniform float u_time;
 
-varying vec3 v_color;
 
 varying vec2 v_uv;
 
@@ -49,7 +47,6 @@ void main() {
   vec4 worldPosition = u_modelView * a_position;
 
   gl_Position = u_projection * u_camera * worldPosition;
-  v_color = a_color;
 
 
 

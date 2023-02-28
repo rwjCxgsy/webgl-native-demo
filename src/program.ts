@@ -1,3 +1,4 @@
+import { Material } from './materials/Material';
 function createShader(
   gl: WebGLRenderingContext,
   type: number,
@@ -13,17 +14,9 @@ function createShader(
   return shader;
 }
 
-function createShaderProgram(
-  gl: WebGLRenderingContext,
-  vertexShaderContent: string,
-  fragmentShaderContent: string
-) {
-  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderContent);
-  const fragmentShader = createShader(
-    gl,
-    gl.FRAGMENT_SHADER,
-    fragmentShaderContent
-  );
+function createShaderProgram(gl: WebGLRenderingContext, material: Material) {
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, material.vs);
+  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, material.fs);
   const program = gl.createProgram()!;
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
@@ -33,13 +26,6 @@ function createShaderProgram(
     throw new Error('program error');
   }
   return program;
-}
-
-interface Attributes {
-  uv?: Float32Array;
-  position: Float32Array;
-  color?: Float32Array;
-  normal?: Float32Array;
 }
 
 export { createShaderProgram };

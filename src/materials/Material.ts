@@ -1,7 +1,7 @@
 import { TextureImage2D } from '../texture';
 
 export interface Options {
-  color: number;
+  color?: number;
   time?: number;
   textures?: TextureImage2D[];
 }
@@ -16,7 +16,7 @@ export class Material {
     public vs: string,
     public fs: string,
     public type: string,
-    option: Options
+    option: Options = {}
   ) {
     Object.entries(option).forEach(([key, value]) => {
       this[key] = value;
