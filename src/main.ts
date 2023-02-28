@@ -35,6 +35,15 @@ import { LineMaterial } from './materials/LineMaterial';
 import { createShaderProgram } from './program';
 import { SkyMaterial } from './materials/skyMaterial';
 
+import water_nrmUrl from './assets/texture/water_nrm.png';
+
+import a_url from '/assets/texture/mountain/default_c.png';
+import b_url from '/assets/texture/mountain/default_d.png';
+import c_url from '/assets/texture/mountain/bigRockFace.png';
+import d_url from '/assets/texture/mountain/grayRock.png';
+import e_url from '/assets/texture/mountain/hardDirt.png';
+import f_url from '/assets/texture/mountain/shortGrass.png';
+
 (window as any).Vector3 = Vector3;
 
 const gui = new GUI();
@@ -73,7 +82,7 @@ const water = new Entity(
   new PlaneGeometry(400, 400),
   new ShaderMaterial(waterVs, waterFs, {
     color: 0x3366ff,
-    textures: [new TextureImage2D('/assets/texture/water_nrm.png')],
+    textures: [new TextureImage2D(water_nrmUrl)],
   })
 );
 
@@ -95,12 +104,12 @@ function loadHighMap() {
       new ShaderMaterial(mountainVs, mountainFs, {
         color: 0xfff000,
         textures: [
-          new TextureImage2D('/assets/texture/mountain/default_c.png'),
-          new TextureImage2D('/assets/texture/mountain/default_d.png'),
-          new TextureImage2D('/assets/texture/mountain/bigRockFace.png'),
-          new TextureImage2D('/assets/texture/mountain/grayRock.png'),
-          new TextureImage2D('/assets/texture/mountain/hardDirt.png'),
-          new TextureImage2D('/assets/texture/mountain/shortGrass.png'),
+          new TextureImage2D(a_url),
+          new TextureImage2D(b_url),
+          new TextureImage2D(c_url),
+          new TextureImage2D(d_url),
+          new TextureImage2D(e_url),
+          new TextureImage2D(f_url),
         ],
       })
     );
