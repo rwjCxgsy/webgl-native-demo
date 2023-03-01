@@ -11,6 +11,8 @@ class Camera {
 
   public target: vec3 = vec3.create();
 
+  public viewMatrix: mat4 = mat4.create();
+
   constructor(
     fov: number,
     aspectRatio: number,
@@ -27,11 +29,11 @@ class Camera {
     );
   }
 
-  get viewMatrix() {
-    let view = mat4.create();
-    mat4.targetTo(view, this.position, this.target, this.up);
-    return view;
-  }
+  // get viewMatrix() {
+  //   let view = mat4.create();
+  //   mat4.targetTo(view, this.position, this.target, this.up);
+  //   return view;
+  // }
 
   get viewMatrixInverse() {
     const m4 = mat4.create();
@@ -41,10 +43,12 @@ class Camera {
 
   lookAt(x: number, y: number, z: number) {
     this.target = [x, y, z];
+    this.update();
   }
 
   setPosition(x: number, y: number, z: number) {
     this.position = [x, y, z];
+    this.update();
   }
 
   eyeToTargetDistance() {
@@ -53,6 +57,18 @@ class Camera {
         Math.pow(this.position[1] - this.target[1], 2) +
         Math.pow(this.position[2] - this.target[2], 2)
     );
+  }
+
+  rotate(angle: number, axis: vec3) {
+    mat4.rotate(this.viewMatrix, mat4.create(), (Math.PI / 180) * angle, axis);
+  }
+
+  multiply(m4: mat4) {
+    mat4.multiply(this.viewMatrix, this.viewMatrix, m4);
+  }
+
+  update() {
+    mat4.targetTo(this.viewMatrix, this.position, this.target, this.up);
   }
 }
 

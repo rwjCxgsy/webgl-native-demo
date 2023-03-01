@@ -8,6 +8,8 @@ class Control {
     incAngle: 0.5, //旋转角度步长值
     currentYAngle: 0, //绕y轴旋转角度
     currentXAngle: 0, //绕x轴旋转角度
+    lastXAngle: 0, //
+    lastYAngle: 0,
     lastClickX: 0,
     lastClickY: 0, //上次触控点X,Y坐标
     ismoved: false, //是否移动标志位
@@ -61,18 +63,49 @@ class Control {
       const { target } = this.camera;
       const [_x, _y, _z] = target;
 
-      const radius = this.camera.eyeToTargetDistance();
+      // const radius = this.camera.eyeToTargetDistance();
 
-      const a_x = Math.sin(this.params.currentYAngle) * radius + _x;
-      const a_y = Math.cos(this.params.currentXAngle) * radius + _y;
+      // const a_x = Math.sin(this.params.currentYAngle) * radius + _x;
+      // const a_y = Math.cos(this.params.currentXAngle) * radius + _y;
+
+      // this.camera.rotate(this.params.currentXAngle, [1, 0, 0]);
+
+      // this.camera.rotate(this.params.currentYAngle, [0, 1, 0]);
+
+      {
+        const m4 = mat4.create();
+        mat4.rotate(
+          m4,
+          mat4.create(),
+          (Math.PI / 180) *
+            (this.params.currentXAngle - this.params.lastXAngle),
+          [1, 0, 0]
+        );
+
+        this.camera.multiply(m4);
+      }
+      {
+        const m4 = mat4.create();
+        mat4.rotate(
+          m4,
+          mat4.create(),
+          (Math.PI / 180) *
+            (this.params.currentYAngle - this.params.lastYAngle),
+          [0, 1, 0]
+        );
+
+        this.camera.multiply(m4);
+      }
 
       // this.camera.target[0] = a_x;
       // this.camera.target[1] = a_y;
 
-      this.camera;
+      // this.camera;
     }
     this.params.lastClickX = x;
     this.params.lastClickY = y;
+    this.params.lastYAngle = this.params.currentYAngle;
+    this.params.lastXAngle = this.params.currentXAngle;
 
     // console.log(this.params.currentYAngle);
     // console.log(this.params.currentXAngle);
