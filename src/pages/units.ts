@@ -93,25 +93,6 @@ export class Line extends Line3 {
   }
 }
 
-export function getRect(
-  p1: Vec2,
-  p2: Vec2
-): { minX: number; maxX: number; minY: number; maxY: number } {
-  let min = new Vec2(0, 0);
-  let max = new Vec2(0, 0);
-  min.x = p1.x;
-  min.y = p1.y;
-  max.x = p1.x;
-  max.y = p1.y;
-
-  // for (let i = 1; i < path.length; i++) {
-  //   min.x = Math.min(min.x, path[i].x);
-  //   min.y = Math.min(min.y, path[i].y);
-  //   max.x = Math.max(max.x, path[i].x);
-  //   max.y = Math.max(max.y, path[i].y);
-  // }
-}
-
 export class Triangle {
   constructor(public path: Vec2[]) {}
 

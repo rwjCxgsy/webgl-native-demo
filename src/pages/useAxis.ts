@@ -23,6 +23,7 @@ export default function Test() {
 
     const event = new CustomEvent('update-render');
 
+    // @ts-ignore
     ctxRef.current = ctx;
     const WIDTH = (canvas.width = width * window.devicePixelRatio);
     const HEIGHT = (canvas.height = height * window.devicePixelRatio);

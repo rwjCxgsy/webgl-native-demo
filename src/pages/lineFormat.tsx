@@ -23,6 +23,7 @@ export default  function Format() {
       <p>1: 通过递增x (k大于0小于1)或者y(k大于1)计算, 通过一次方程计算后四舍五入取整，ps: 计算量大，需要加法运算再取整运算</p>
       <p>2: Bresenham算法，通过递增x (k大于0小于1)或者y(k大于1), 如对x递增，轴坐标可能是（x, y）或（x, y+1）,判断那两个点那个距离线段近即可</p>
     `)
+        // @ts-ignore
     container.current?.append(ctxRef.current.canvas)
     const ctx = ctxRef.current!
     const canvas = ctxRef.current!.canvas as HTMLCanvasElement
@@ -62,6 +63,7 @@ export default  function Format() {
     return () => {
       canvas.removeEventListener('click', clickHandler)
       window.removeEventListener('update-render', handler)
+      // @ts-ignore
       destroy();
     }
   }, [])

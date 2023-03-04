@@ -14,6 +14,7 @@ function Matrix() {
   useEffect(() => {
 
 
+    // @ts-ignore
     container.current?.append(ctxRef.current.canvas)
 
     const ctx = ctxRef.current!
@@ -42,32 +43,32 @@ function Matrix() {
       ty: 0,
       rotation: 0,
     };
-    gui.add(options, 'a', -10, 10, 1).onChange((e) => {
+    gui.add(options, 'a', -10, 10, 1).onChange((e: number) => {
       const val = projection.transpose().toArray();
       val[0] = e;
       projection.set(...val);
     });
-    gui.add(options, 'b', -10, 10, 1).onChange((e) => {
+    gui.add(options, 'b', -10, 10, 1).onChange((e: number) => {
       const val = projection.transpose().toArray();
       val[3] = e;
       projection.set(...val);
     });
-    gui.add(options, 'c', -10, 10, 1).onChange((e) => {
+    gui.add(options, 'c', -10, 10, 1).onChange((e: number) => {
       const val = projection.transpose().toArray();
       val[1] = e;
       projection.set(...val);
     });
-    gui.add(options, 'd', -10, 10, 1).onChange((e) => {
+    gui.add(options, 'd', -10, 10, 1).onChange((e: number) => {
       const val = projection.transpose().toArray();
       val[4] = e;
       projection.set(...val);
     });
-    gui.add(options, 'tx', -10, 10, 1).onChange((e) => {
+    gui.add(options, 'tx', -10, 10, 1).onChange((e: number) => {
       const val = projection.transpose().toArray();
       val[2] = e;
       projection.set(...val);
     });
-    gui.add(options, 'ty', -10, 10, 1).onChange((e) => {
+    gui.add(options, 'ty', -10, 10, 1).onChange((e: number) => {
       const val = projection.transpose().toArray();
       val[5] = e;
       projection.set(...val);
@@ -76,7 +77,7 @@ function Matrix() {
     gui
       .add(options, 'rotation', -180, 180, 5)
       .name('旋转')
-      .onChange((e) => {
+      .onChange((e: number) => {
         const val = projection.transpose().toArray();
 
         const c = Math.cos((Math.PI / 180) * e);

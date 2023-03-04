@@ -18,6 +18,7 @@ export default function Matrix() {
       <p>3: 再通过重心坐标线性插值</p>
       `
     )
+        // @ts-ignore
     container.current?.append(ctxRef.current.canvas);
     const ctx = ctxRef.current!;
     const canvas = ctxRef.current!.canvas as HTMLCanvasElement;
@@ -124,6 +125,7 @@ export default function Matrix() {
     return () => {
       canvas.removeEventListener('click', clickHandler);
       window.removeEventListener('update-render', handler);
+          // @ts-ignore
       destroy()
     };
   }, []);
