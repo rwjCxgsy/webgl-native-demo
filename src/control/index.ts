@@ -125,6 +125,12 @@ class Control {
       }
     }
   };
+
+  destroy() {
+    this.ele.removeEventListener('mousedown', this.onmousedown);
+    this.ele.removeEventListener('mousemove', this.onmousemove);
+    this.ele.removeEventListener('mouseup', this.onmouseup);
+  }
 }
 
 export { Control };

@@ -55,15 +55,22 @@ class Renderer {
     // 获取深度纹理
     gl.getExtension('WEBGL_depth_texture');
     gl.getExtension('OES_element_index_uint');
-    ele.width =
-      (window.innerWidth || document.documentElement.clientWidth) *
-      window.devicePixelRatio;
-    (ele.height = window.innerHeight || document.documentElement.clientHeight) *
-      window.devicePixelRatio;
-    ele.style.width =
-      (window.innerWidth || document.documentElement.clientWidth) + 'px';
-    ele.style.height =
-      (window.innerHeight || document.documentElement.clientHeight) + 'px';
+    gl.getExtension('WEBGL_debug_renderer_info');
+    gl.getExtension('WEBGL_debug_shaders');
+
+    const width =
+      options?.width ||
+      window.innerWidth ||
+      document.documentElement.clientWidth;
+    const height =
+      options?.height ||
+      window.innerHeight ||
+      document.documentElement.clientHeight;
+
+    ele.width = width * window.devicePixelRatio;
+    ele.height = height * window.devicePixelRatio;
+    ele.style.width = width + 'px';
+    ele.style.height = height + 'px';
 
     this.shadowCamera.lookAt(0, 0, 0);
 
@@ -81,6 +88,7 @@ class Renderer {
     // );
     this.depthTexture = depthTexture;
     this.depthFramebuffer = depthFramebuffer;
+    console.log(this.gl.getSupportedExtensions());
   }
 
   transUniforms(
@@ -418,7 +426,6 @@ class Renderer {
     });
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, frustumProgramInfo.indicesBuffer!);
-
     gl.drawElements(
       gl.LINES,
       // @ts-ignore

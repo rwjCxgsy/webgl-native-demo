@@ -97,4 +97,6 @@ void main(){
 
    gl_FragColor= mix(frag, u_fogColor, fogAmount);
 
+
+
 }
