@@ -2,7 +2,7 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import Root from './pages/home';
 import  './index.css'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, createHashRouter, RouterProvider } from 'react-router-dom';
 import Matrix from './pages/matrix'
 import Format from './pages/format'
 import LineFormat from './pages/lineFormat'
@@ -11,7 +11,7 @@ import ErrorPage from './pages/error'
 
 const root = document.getElementById('root')!;
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Root />,
