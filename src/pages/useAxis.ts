@@ -38,6 +38,7 @@ export default function Test() {
     let T2 = HEIGHT / 2;
 
     base.set(X1, Y1, T1, X2, Y2, T2, 0, 0, 1);
+    // base.scale(window.devicePixelRatio, window.devicePixelRatio);
 
     ctxBaseProjection.current.copy(base);
 
