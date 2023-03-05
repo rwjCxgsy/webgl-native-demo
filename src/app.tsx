@@ -1,41 +1,12 @@
-import React from 'react';
 import {createRoot} from 'react-dom/client';
-import Root from './pages/home';
 import  './index.css'
-import { createBrowserRouter, createHashRouter, RouterProvider } from 'react-router-dom';
-import Matrix from './pages/matrix'
-import Format from './pages/format'
-import LineFormat from './pages/lineFormat'
-import Demo from './pages/default'
-import ErrorPage from './pages/error'
+import { createHashRouter, RouterProvider } from 'react-router-dom';
+
+import Routes from './route';
 
 const root = document.getElementById('root')!;
 
-const router = createHashRouter([
-  {
-    path: "/",
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "/matrix",
-        element: <Matrix />,
-      },
-      {
-        path: "/line-format",
-        element: <LineFormat />,
-      },
-      {
-        path: "/format",
-        element: <Format />,
-      },
-      {
-        path: "/demo",
-        element: <Demo />,
-      },
-    ],
-  },
-]);
+const router = createHashRouter(Routes);
 
 createRoot(root).render( <RouterProvider router={router} />);
 

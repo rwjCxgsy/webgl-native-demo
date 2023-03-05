@@ -1,22 +1,57 @@
 import { Color, Vector2, Line3, Matrix3, Vector3 } from 'three';
 
+//@ts-ignore
+import segseg from 'segseg';
 export class Vec2 extends Vector2 {
   public extraColor?: Color;
   constructor(x = 0, y = 0) {
     super(x, y);
   }
+  toVec3() {
+    return new Vector3(this.x, this.y, 0);
+  }
 }
 
-export class Line extends Line3 {
+export class Ray {
+  public k = 0;
+  public b = 0;
+  constructor(public position: Vec2, public direction: Vec2) {
+    this.k = direction.y - this.position.y - (direction.x - this.position.x);
+    this.b = position.y - position.x * this.k;
+  }
+}
+
+export class Polygon {
+  constructor(public path: Vec2[]) {}
+
+  toTriangles() {
+    const { path } = this;
+  }
+
+  inspection(point: Vec2): boolean {
+    const ray = new Ray(point, new Vec2());
+    // const nRay = new Ray(new Vec2(), point.clone().negate())
+
+    const data = [...this.path, this.path[0]];
+    let crossPointNumber = 0;
+    for (let i = 1; i < data.length; i++) {
+      const s = data[i - 1];
+      const e = data[i];
+      const line = new Line(s, e);
+      const bool = line.crossRay(ray);
+      crossPointNumber += bool ? 1 : 0;
+    }
+    return crossPointNumber % 2 == 1;
+  }
+}
+
+export class Line {
   public k = 0;
   public b = 0;
   public p1: Vec2;
   public p2: Vec2;
   constructor(start: Vec2, end: Vec2) {
-    const sV3 = new Vector3(start.x, start.y, 0);
-    const eV3 = new Vector3(end.x, end.y, 0);
     const k = (end.y - start.y) / (end.x - start.x);
-    super(sV3, eV3);
     start.extraColor = new Color(0xff0000);
     end.extraColor = new Color(0x0000ff);
     this.p1 = start;
@@ -91,6 +126,40 @@ export class Line extends Line3 {
     }
     return path;
   }
+
+  crossRay(ray: Ray): boolean {
+    // const {k, b} = ray
+    // let x: number;
+    // let y: number;
+    // const minx = Math.min(this.p1.x, this.p2.x);
+    // const maxX = Math.max(this.p1.x, this.p2.x);
+    // const minY = Math.min(this.p1.y, this.p2.y);
+    // const maxY = Math.max(this.p1.y, this.p2.y);
+    // if (this.k === Infinity || this.k === -Infinity) {
+    //   y = k * this.p1.x;
+    //   x = this.p1.x;
+    //   return y > minY && y < maxY;
+    // }
+    // if (k === Infinity || k === -Infinity) {
+    //   return 0 > minx && 0 < maxX;
+    // }
+    // x = (this.b - b) / (k - this.k);
+    // y = k * x + b;
+    // return x > minx && x < maxX;
+
+    const pp1 = this.p1.clone().sub(ray.position.clone()).normalize();
+    const pp2 = this.p2.clone().sub(ray.position.clone()).normalize();
+    const pp3 = ray.direction.clone().sub(ray.position.clone()).normalize();
+    if (pp1.length() === 0 || pp2.length() === 0 || pp3.length() === 0) {
+      return false;
+    }
+    const a1 = pp2.dot(pp1);
+    const a2 = pp3.dot(pp1);
+    const c1 = pp2.cross(pp1);
+    const c2 = pp3.cross(pp1);
+    const equal = (c1 >= 0 && c2 >= 0) || (c1 < 0 && c2 < 0);
+    return equal && Math.acos(a1) > Math.acos(a2);
+  }
 }
 
 export class Triangle {
@@ -101,9 +170,17 @@ export class Triangle {
     const edgeC = point.clone().sub(a.clone()).cross(b.clone().sub(a.clone()));
     const edgeA = point.clone().sub(b.clone()).cross(c.clone().sub(b.clone()));
     const edgeB = point.clone().sub(c.clone()).cross(a.clone().sub(c.clone()));
-    const bool =
-      (edgeA > 0 && edgeB > 0 && edgeC > 0) ||
+    let bool =
+      (edgeA >= 0 && edgeB >= 0 && edgeC >= 0) ||
       (edgeA < 0 && edgeB < 0 && edgeC < 0);
+
+    if (
+      point.distanceTo(a) === 0 ||
+      point.distanceTo(b) === 0 ||
+      point.distanceTo(c) === 0
+    ) {
+      bool = true;
+    }
 
     const area = edgeA + edgeB + edgeC;
     const wa = new Color(a.extraColor || 0x666666).multiplyScalar(edgeA / area);
@@ -117,6 +194,21 @@ export class Triangle {
       color,
       bool,
     };
+  }
+
+  getWightPoint(): Vec2 {
+    const [a, b, c] = this.path;
+    const point = a.clone();
+    point.multiplyScalar(0.3333);
+    point.add(b.clone().multiplyScalar(0.3333));
+    point.add(c.clone().multiplyScalar(0.3333));
+    return point;
+  }
+  isValid() {
+    const [a, b, c] = this.path;
+    return (
+      a.distanceTo(b) !== 0 && a.distanceTo(c) !== 0 && c.distanceTo(b) !== 0
+    );
   }
 }
 
@@ -171,16 +263,22 @@ export function drawLine(
   ctx: CanvasRenderingContext2D,
   point1: Vec2,
   point2: Vec2,
+  dash: boolean = false,
   color: string = '#3366ff'
 ) {
   if (!point1 || !point2) {
     return;
   }
+  ctx.save();
   ctx.strokeStyle = color;
   ctx.beginPath();
   ctx.moveTo(point1.x, point1.y);
   ctx.lineTo(point2.x, point2.y);
+  if (dash) {
+    ctx.setLineDash([0.5, 0.2]);
+  }
   ctx.stroke();
+  ctx.restore();
 }
 
 export function drawCell(
@@ -199,4 +297,78 @@ export function drawCell(
   ctx.closePath();
   ctx.fill();
   ctx.restore();
+}
+
+export function drawCircle(
+  ctx: CanvasRenderingContext2D,
+  center: Vec2,
+  radius: number
+) {
+  ctx.save();
+  ctx.strokeStyle = '#aaaaaa';
+  ctx.beginPath();
+  ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+}
+
+export function drawText(
+  ctx: CanvasRenderingContext2D,
+  center: Vec2,
+  content: string,
+  color: string = '#ff0000'
+) {
+  ctx.save();
+  ctx.transform(1, 0, 0, -1, center.x, center.y);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = color;
+  ctx.font = '1px bold';
+  ctx.fillText(content, 0, 0);
+  ctx.restore();
+}
+
+export function polygonIsTu(
+  p1: Vec2,
+  p2: Vec2,
+  p3: Vec2,
+  p4: Vec2,
+  args?: Vec2[]
+): boolean {
+  const v1 = p3.clone().sub(p2.clone());
+  const v2 = p1.clone().sub(p3.clone());
+  const v3 = p4.clone().sub(p3.clone());
+  const v4 = p1.clone().sub(p4.clone());
+  if (
+    p1.distanceTo(p3) === 0 ||
+    p1.distanceTo(p4) === 0 ||
+    p2.distanceTo(p3) === 0 ||
+    p3.distanceTo(p4) === 0
+  ) {
+    return false;
+  }
+  return v1.cross(v2) / 0 == v4.cross(v3) / 0;
+}
+
+export function lineCross(p1: Vec2, p2: Vec2, p3: Vec2, p4: Vec2) {
+  const isect = [NaN, NaN]; // the output vector where collision point is stored
+
+  //                       seg 1                   seg 2
+  //                ┌-------------------┐   ┌-----------------┐
+  segseg(isect, p1.toArray(), p2.toArray(), p3.toArray(), p4.toArray());
+  if (isNaN(isect[0]) && isNaN(isect[1])) {
+    return false;
+  }
+  const p = new Vec2(...isect);
+  if (
+    p.distanceTo(p1) === 0 ||
+    p.distanceTo(p2) === 0 ||
+    p.distanceTo(p3) === 0 ||
+    p.distanceTo(p4) === 0
+  ) {
+    return false;
+  }
+
+  return true;
 }

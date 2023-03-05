@@ -26,7 +26,7 @@ export default function Matrix() {
 
 
 
-    const path: Array<Vector2> = [
+    const path: Array<Vec2> = [
       new Vec2(-5, 0),
       new Vec2(5, 4),
       new Vec2(6, -8)
@@ -34,8 +34,8 @@ export default function Matrix() {
       v.extraColor = new Color('#' + Math.random().toString(16).substring(2, 8));
       return v
     });
-    let min = new Vector2(0, 0);
-    let max = new Vector2(0, 0);
+    let min = new Vec2(0, 0);
+    let max = new Vec2(0, 0);
 
     function computedAndDrawEdge() {
       if (!path.length) {
@@ -53,10 +53,10 @@ export default function Matrix() {
         max.y = Math.max(max.y, path[i].y);
       }
 
-      drawLine(ctx, min, new Vector2(max.x, min.y), '#666666');
-      drawLine(ctx, new Vector2(max.x, min.y), max, '#666666');
-      drawLine(ctx, max, new Vector2(min.x, max.y), '#666666');
-      drawLine(ctx, new Vector2(min.x, max.y), min, '#666666');
+      drawLine(ctx, min, new Vec2(max.x, min.y), false, '#666666');
+      drawLine(ctx, new Vec2(max.x, min.y), max, false, '#666666');
+      drawLine(ctx, max, new Vec2(min.x, max.y), false, '#666666');
+      drawLine(ctx, new Vec2(min.x, max.y), min, false, '#666666');
     }
 
     function draw() {
