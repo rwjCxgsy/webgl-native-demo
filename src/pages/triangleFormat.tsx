@@ -108,7 +108,7 @@ export default function Matrix() {
       const m4t = new Matrix3();
       // m4t.translate(0.5, 0.5);
       const ve2 = new Vec2(offsetX, offsetY);
-      ve2.multiplyScalar(2)
+      ve2.multiplyScalar(window.devicePixelRatio)
       ve2.applyMatrix3(
         ctxBaseProjection.current.clone().multiply(m4t).invert()
       );
