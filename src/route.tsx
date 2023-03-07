@@ -8,6 +8,8 @@ import Outer from './pages/outer'
 import CircleFormat from './pages/circleFormat'
 import Grid from './pages/grid'
 import Hold from './pages/hole'
+import HighMap from './pages/highMap'
+import { LoadModel } from './pages/loadModel'
 
 const Routes = [
   {
@@ -61,8 +63,23 @@ const Routes = [
       },
       {
         path: "/demo",
-        title: 'demo',
+        title: '阴影 法线贴图',
         element: <Demo />,
+      },
+      {
+        path: "/high-map",
+        title: '高度图',
+        element: <HighMap />,
+      },
+      {
+        path: "/multiple",
+        title: '多视角切换',
+        element: <Demo />,
+      },
+      {
+        path: "/load-model",
+        title: '模型加载',
+        element: <LoadModel />,
       },
     ],
   },

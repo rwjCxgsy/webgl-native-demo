@@ -1,4 +1,5 @@
-import { Material } from './materials/Material';
+import { createShaderContent } from './engine/materials/shader/lib';
+import { Material } from './engine/materials/Material';
 function createShader(
   gl: WebGLRenderingContext,
   type: number,
@@ -15,6 +16,8 @@ function createShader(
 }
 
 function createShaderProgram(gl: WebGLRenderingContext, material: Material) {
+  createShaderContent(material);
+
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, material.vs);
   const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, material.fs);
   const program = gl.createProgram()!;

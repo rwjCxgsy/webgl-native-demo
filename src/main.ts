@@ -1,68 +1,32 @@
 import {
   StandardMaterial,
   BasicMaterial,
-  NormalMaterial,
   ShaderMaterial,
-} from './materials';
+} from './engine/materials';
 
-import { Entity } from './eneity/index';
-import { BoxGeometry, Vector3 } from 'three';
-
-import { mat4, vec3 } from 'gl-matrix';
+import { Entity } from './engine/eneity/index';
 
 import './index.css';
 
 import GUI from 'lil-gui';
-import { Renderer } from './renderer';
-import { Object3D } from './eneity';
-import { AmbientLight, PointLight } from './light/light';
+import { Renderer } from './engine/renderer';
+import { Object3D } from './engine/eneity';
+import { AmbientLight, PointLight } from './engine/light/light';
 
-import { TextureImage2D } from './texture';
+import { TextureImage2D } from './engine/texture';
 
-import { SphereGeometry } from './geometry/sphere';
-import { CubeGeometry, PlaneGeometry } from './geometry';
+import { SphereGeometry } from './engine/geometry/sphere';
+import { CubeGeometry, PlaneGeometry } from './engine/geometry';
 
-import waterVs from './materials/shader/water/shader.vs.glsl?raw';
-import waterFs from './materials/shader/water/shader.fs.glsl?raw';
+import waterVs from './engine/materials/shader/water/shader.vs.glsl?raw';
+import waterFs from './engine/materials/shader/water/shader.fs.glsl?raw';
 
-import mountainVs from './materials/shader/mountain/shader.vs.glsl?raw';
-import mountainFs from './materials/shader/mountain/shader.fs.glsl?raw';
-import { caleNormalVector, getNormalByHighMap } from './utils/highMap';
-import { Control } from './control';
-import { Camera } from './renderer/camera';
-import { CustomGeometry } from './geometry/customGeometry';
-import { LineMaterial } from './materials/LineMaterial';
-import { createShaderProgram } from './program';
-import { SkyMaterial } from './materials/skyMaterial';
+import { Control } from './engine/control';
+import { Camera } from './engine/renderer/camera';
+
+import { SkyMaterial } from './engine/materials/skyMaterial';
 
 import water_nrmUrl from './assets/texture/water_nrm.png';
-
-import a_url from '/assets/texture/mountain/default_c.png';
-import b_url from '/assets/texture/mountain/default_d.png';
-import c_url from '/assets/texture/mountain/bigRockFace.png';
-import d_url from '/assets/texture/mountain/grayRock.png';
-import e_url from '/assets/texture/mountain/hardDirt.png';
-import f_url from '/assets/texture/mountain/shortGrass.png';
-// import girl from './assets/racer_anime_girl.glb';
-
-// import { load } from '@loaders.gl/core';
-// import { GLBLoader } from '@loaders.gl/gltf';
-
-// const data = await load('racer_anime_girl.glb', GLBLoader);
-
-// console.log(data);
-
-// const chunk = data.binChunks[0].arrayBuffer.slice(27096);
-
-// const { byteLength, byteOffset } = data.json.bufferViews[3];
-// const imageData = chunk.slice(byteOffset, byteOffset + byteLength);
-
-// var blob = new Blob([imageData], { type: 'image/png' });
-// var imageUrl = (window.URL || window.webkitURL).createObjectURL(blob);
-// const image = new Image();
-// image.src = imageUrl;
-
-// document.body.append(image);
 
 function start(canvas: HTMLCanvasElement) {
   const gui = new GUI();
@@ -136,45 +100,12 @@ function start(canvas: HTMLCanvasElement) {
     new PlaneGeometry(1000, 1000),
     new ShaderMaterial(waterVs, waterFs, {
       color: 0x3366ff,
+      shadow: true,
       textures: [new TextureImage2D(water_nrmUrl)],
     })
   );
 
   scene.add(water);
-
-  function loadHighMap() {
-    const image = new Image();
-    image.onload = () => {
-      const geometry = new PlaneGeometry(99, 99, 99, 99);
-      const { normal, heightY } = getNormalByHighMap(image, 100, 100);
-      geometry.attr.normal = new Float32Array(normal);
-      heightY.forEach((val: number, index) => {
-        // @ts-ignore
-        geometry.attr.position[index * 3 + 1] = val;
-      });
-
-      const mountain = new Entity(
-        geometry,
-        new ShaderMaterial(mountainVs, mountainFs, {
-          color: 0xfff000,
-          textures: [
-            new TextureImage2D(a_url),
-            new TextureImage2D(b_url),
-            new TextureImage2D(c_url),
-            new TextureImage2D(d_url),
-            new TextureImage2D(e_url),
-            new TextureImage2D(f_url),
-          ],
-        })
-      );
-
-      mountain.name = '山';
-
-      // scene.add(mountain);
-    };
-    image.src = '/assets/texture/mountain/default.png';
-  }
-  loadHighMap();
 
   const light = new Entity(
     new SphereGeometry(2, 16, 8),
@@ -184,8 +115,6 @@ function start(canvas: HTMLCanvasElement) {
   // scene.add(light);
 
   const control = new Control(canvas, camera);
-
-  const gl = renderer.gl;
 
   function animate(time: number) {
     run = requestAnimationFrame(animate);

@@ -12,6 +12,7 @@
     "@loaders.gl/core": "^3.3.1",
     "@loaders.gl/csv": "^3.3.1",
     "@loaders.gl/gltf": "^3.3.1",
+    "@loaders.gl/obj": "^3.3.1",
     "@types/react-router": "^5.1.20",
     "@types/react-router-dom": "^5.3.3",
     "@types/three": "^0.149.0",
