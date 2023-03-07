@@ -351,6 +351,7 @@ class Renderer {
           0
         );
       } else {
+        // @ts-ignore
         gl.drawArrays(gl.TRIANGLES, 0, obj.geometry.attr.position.length / 3);
       }
     });
