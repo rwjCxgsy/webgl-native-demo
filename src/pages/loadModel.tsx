@@ -10,6 +10,7 @@ import { CustomGeometry } from "../engine/geometry/customGeometry";
 import { StandardMaterial } from '../engine/materials';
 import { TextureImage2D } from '../engine/texture';
 import { SphereGeometry } from '../engine/geometry';
+import { Control } from '../engine/control';
 
 
 
@@ -175,6 +176,8 @@ export function LoadModel () {
   camera.lookAt(0, 0, 0);
   camera.setPosition(30, 30, 30);
 
+  const control = new Control(canvas, camera)
+
   // 添加灯光
   const baseLight = new AmbientLight([1, 1, 1]);
   const pointLight = new PointLight([1, 1, 1], [10, 20, 10]);
@@ -206,8 +209,8 @@ export function LoadModel () {
 
     function animate (time: number) {
       ani = window.requestAnimationFrame(animate)
-      const x = Math.sin(time / 200) * 50;
-      const z = Math.cos(time / 200) * 50;
+      const x = Math.sin(time / 200) * 20;
+      const z = Math.cos(time / 200) * 20
       pointLight.position = [x, pointLight.position[1] ,z]
       entity?.rotateY(time / 200)
       renderer.render(camera, scene, [baseLight, pointLight]);
@@ -215,6 +218,7 @@ export function LoadModel () {
     ani = window.requestAnimationFrame(animate)
     return () => {
       window.cancelAnimationFrame(ani)
+      control.destroy()
     }
   }, [])
   return <canvas ref={container}></canvas>

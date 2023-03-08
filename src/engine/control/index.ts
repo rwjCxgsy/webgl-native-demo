@@ -1,4 +1,4 @@
-import { mat4 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 import { Camera } from '../renderer/camera';
 
 class Control {
@@ -20,6 +20,17 @@ class Control {
     sunAngle: Math.PI / 2, //光照初始旋转角度
   };
   constructor(public ele: HTMLCanvasElement, public camera: Camera) {
+    const v3 = vec3.create();
+
+    v3[0] = this.camera.viewMatrix[12];
+    v3[1] = this.camera.viewMatrix[13];
+    v3[2] = this.camera.viewMatrix[14];
+
+    this.params.currentXAngle = (Math.atan(v3[1] / v3[2]) / Math.PI) * 180;
+    this.params.currentYAngle = (Math.atan(v3[0] / v3[2]) / Math.PI) * 180;
+
+    console.log(camera, this.params);
+
     ele.addEventListener('mousedown', this.onmousedown);
     ele.addEventListener('mousemove', this.onmousemove);
     ele.addEventListener('mouseup', this.onmouseup);
@@ -53,62 +64,40 @@ class Control {
       this.params.down = false;
       this.params.currentYAngle = currentYAngle + (x - lastClickX) * incAngle;
       this.params.currentXAngle = currentXAngle + (y - lastClickY) * incAngle;
+      // console.log(this.params.currentXAngle);
       if (currentXAngle > 90) {
         this.params.currentXAngle = 90;
+        // this.params.lastXAngle = 90;
       } //设置旋转的角度为90
-      else if (currentXAngle < -0) {
-        this.params.currentXAngle = -0;
+      else if (currentXAngle < 0) {
+        this.params.currentXAngle = 0;
       } //设置旋转的角度为-90
 
-      const { target } = this.camera;
-      const [_x, _y, _z] = target;
-
-      // const radius = this.camera.eyeToTargetDistance();
-
-      // const a_x = Math.sin(this.params.currentYAngle) * radius + _x;
-      // const a_y = Math.cos(this.params.currentXAngle) * radius + _y;
-
-      // this.camera.rotate(this.params.currentXAngle, [1, 0, 0]);
-
-      // this.camera.rotate(this.params.currentYAngle, [0, 1, 0]);
-
       {
+        const v3 = vec3.create();
+
+        v3[0] = this.camera.viewMatrix[12];
+        v3[1] = this.camera.viewMatrix[13];
+        v3[2] = this.camera.viewMatrix[14];
+
         const m4 = mat4.create();
-        mat4.rotate(
+        mat4.rotateY(
           m4,
           mat4.create(),
-          (Math.PI / 180) *
-            (this.params.currentXAngle - this.params.lastXAngle),
-          [1, 0, 0]
+          (Math.PI / 180) * (this.params.currentYAngle - this.params.lastYAngle)
         );
 
-        this.camera.multiply(m4);
+        const newP = vec3.create();
+
+        vec3.transformMat4(newP, v3, m4);
+
+        this.camera.setPosition(newP[0], Math.max(newP[1], 0), newP[2]);
       }
-      {
-        const m4 = mat4.create();
-        mat4.rotate(
-          m4,
-          mat4.create(),
-          (Math.PI / 180) *
-            (this.params.currentYAngle - this.params.lastYAngle),
-          [0, 1, 0]
-        );
-
-        this.camera.multiply(m4);
-      }
-
-      // this.camera.target[0] = a_x;
-      // this.camera.target[1] = a_y;
-
-      // this.camera;
     }
     this.params.lastClickX = x;
     this.params.lastClickY = y;
     this.params.lastYAngle = this.params.currentYAngle;
     this.params.lastXAngle = this.params.currentXAngle;
-
-    // console.log(this.params.currentYAngle);
-    // console.log(this.params.currentXAngle);
   };
   onmouseup = () => {
     const { down, lastClickX, lastClickY } = this.params;
