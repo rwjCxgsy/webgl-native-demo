@@ -77,7 +77,7 @@ export default function HighMap () {
     
         scene.add(mountain);
       };
-      image.src = '/assets/texture/mountain/default.png';
+      image.src = './assets/texture/mountain/default.png';
     }
     load();
 
