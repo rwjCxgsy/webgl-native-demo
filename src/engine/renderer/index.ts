@@ -234,7 +234,7 @@ class Renderer {
       gl.vertexAttribPointer(a_texcoord, 2, gl.FLOAT, false, 0, 0);
     }
 
-    if (a_color >= 0) {
+    if (a_color >= 0 && entity.buffers.color) {
       gl.enableVertexAttribArray(a_color);
       gl.bindBuffer(gl.ARRAY_BUFFER, entity.buffers.color!);
       gl.vertexAttribPointer(a_color, 3, gl.FLOAT, false, 0, 0);
@@ -351,7 +351,6 @@ class Renderer {
 
       if (programInfo.indicesBuffer) {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, programInfo.indicesBuffer!);
-
         gl.drawElements(
           obj.geometry.drawType,
           // @ts-ignore
@@ -458,7 +457,7 @@ class Renderer {
         0
       );
     } else {
-      gl.drawArrays(gl.TRIANGLES, 0, 100);
+      gl.drawArrays(gl.LINES, 0, 100);
     }
   }
 }

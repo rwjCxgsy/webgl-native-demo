@@ -11,10 +11,14 @@ const indices = [
 
   0, 4, 1, 5, 3, 7, 2, 6,
 ];
+const color = [
+  1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+];
 class CustomBoxGeometry extends Geometry {
   constructor() {
     const data = {
       position: new Float32Array(position),
+      color: new Float32Array(color),
       indices: new Uint16Array(indices),
     };
     super(data);

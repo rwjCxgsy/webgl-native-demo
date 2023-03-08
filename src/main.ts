@@ -87,7 +87,7 @@ function start(canvas: HTMLCanvasElement) {
 
   // 天空穹
   const sky = new Entity(
-    new SphereGeometry(400, 64, 32, 0, Math.PI / 2, 0, Math.PI * 2),
+    new SphereGeometry(320, 64, 32, 0, Math.PI / 2, 0, Math.PI * 2),
     new SkyMaterial({
       color: 0x3366ff,
     })
@@ -97,7 +97,7 @@ function start(canvas: HTMLCanvasElement) {
   scene.add(sky);
 
   const water = new Entity(
-    new PlaneGeometry(1000, 1000),
+    new PlaneGeometry(500, 500),
     new ShaderMaterial(waterVs, waterFs, {
       color: 0x3366ff,
       shadow: true,
