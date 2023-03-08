@@ -59,6 +59,9 @@ export default function Axis() {
       new StandardMaterial({ color: 0x3366ff })
     );
 
+
+    point.setPosition([0,options.radius,0])
+
     scene.add(point);
 
     let ani: number = 0;
