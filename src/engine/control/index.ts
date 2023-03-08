@@ -1,7 +1,20 @@
 import { mat4, vec3 } from 'gl-matrix';
 import { Camera } from '../renderer/camera';
+import THREE from 'three';
 
 class Control {
+  cameraRadius = 500; // 相机半径
+  cameraPolarAngle = 0; // 相机极角
+  cameraAzimuthalAngle = 0; // 相机方位角
+  cameraTarget: vec3; // 相机目标点
+
+  orbitControlEnabled = true; // 是否启用 OrbitControl
+  orbitControlZoomSpeed = 0.5; // 缩放速度
+  orbitControlRotateSpeed = 0.5; // 旋转速度
+  orbitControlPanSpeed = 0.5; // 平移速度
+  orbitControlMinRadius = 10; // 相机半径最小值
+  orbitControlMaxRadius = Infinity; // 相机半径最大值
+
   params = {
     xOffset: 0, //x方向移动步长值
     yOffset: 0, //y方向移动步长值
@@ -20,16 +33,22 @@ class Control {
     sunAngle: Math.PI / 2, //光照初始旋转角度
   };
   constructor(public ele: HTMLCanvasElement, public camera: Camera) {
-    const v3 = vec3.create();
+    // const v3 = vec3.create();
 
-    v3[0] = this.camera.viewMatrix[12];
-    v3[1] = this.camera.viewMatrix[13];
-    v3[2] = this.camera.viewMatrix[14];
+    const x = camera.position[0];
+    const y = camera.position[1];
+    const z = camera.position[2];
 
-    this.params.currentXAngle = (Math.atan(v3[1] / v3[2]) / Math.PI) * 180;
-    this.params.currentYAngle = (Math.atan(v3[0] / v3[2]) / Math.PI) * 180;
+    this.cameraRadius = vec3.length(camera.position);
+    this.cameraTarget = vec3.clone(camera.target);
 
-    console.log(camera, this.params);
+    this.cameraPolarAngle = Math.acos(camera.position[2] / this.cameraRadius);
+    this.cameraAzimuthalAngle = Math.atan2(
+      camera.position[1],
+      camera.position[0]
+    );
+    this.params.currentXAngle = (Math.atan(y / z) / Math.PI) * 180;
+    this.params.currentYAngle = (Math.atan(x / z) / Math.PI) * 180;
 
     ele.addEventListener('mousedown', this.onmousedown);
     ele.addEventListener('mousemove', this.onmousemove);
@@ -62,37 +81,19 @@ class Control {
       y = event.clientY;
     if (ismoved) {
       this.params.down = false;
+      // 围绕y轴旋转
       this.params.currentYAngle = currentYAngle + (x - lastClickX) * incAngle;
+      this.params.currentYAngle %= 360;
+      // 围绕x轴旋转
       this.params.currentXAngle = currentXAngle + (y - lastClickY) * incAngle;
-      // console.log(this.params.currentXAngle);
-      if (currentXAngle > 90) {
-        this.params.currentXAngle = 90;
-        // this.params.lastXAngle = 90;
-      } //设置旋转的角度为90
-      else if (currentXAngle < 0) {
-        this.params.currentXAngle = 0;
-      } //设置旋转的角度为-90
+      this.params.currentXAngle = Math.min(this.params.currentXAngle, 89);
+      this.params.currentXAngle = Math.max(this.params.currentXAngle, 1);
 
-      {
-        const v3 = vec3.create();
+      this.cameraPolarAngle =
+        ((90 - this.params.currentXAngle) / 180) * Math.PI;
+      this.cameraAzimuthalAngle = (this.params.currentYAngle / 180) * Math.PI;
 
-        v3[0] = this.camera.viewMatrix[12];
-        v3[1] = this.camera.viewMatrix[13];
-        v3[2] = this.camera.viewMatrix[14];
-
-        const m4 = mat4.create();
-        mat4.rotateY(
-          m4,
-          mat4.create(),
-          (Math.PI / 180) * (this.params.currentYAngle - this.params.lastYAngle)
-        );
-
-        const newP = vec3.create();
-
-        vec3.transformMat4(newP, v3, m4);
-
-        this.camera.setPosition(newP[0], Math.max(newP[1], 0), newP[2]);
-      }
+      this.updateCamera();
     }
     this.params.lastClickX = x;
     this.params.lastClickY = y;
@@ -114,6 +115,18 @@ class Control {
       }
     }
   };
+
+  updateCamera() {
+    const r = this.cameraRadius;
+
+    const x =
+      r * Math.sin(this.cameraPolarAngle) * Math.cos(this.cameraAzimuthalAngle);
+    const y = r * Math.cos(this.cameraPolarAngle);
+    const z =
+      r * Math.sin(this.cameraPolarAngle) * Math.sin(this.cameraAzimuthalAngle);
+
+    this.camera.setPosition(x, y, z);
+  }
 
   destroy() {
     this.ele.removeEventListener('mousedown', this.onmousedown);

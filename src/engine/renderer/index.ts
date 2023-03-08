@@ -55,6 +55,8 @@ class Renderer {
     }
   ) {
     const gl = (this.gl = ele.getContext('webgl', { antialias: true })!);
+
+    console.log(gl.TRIANGLES, gl.LINES);
     // 获取深度纹理
     gl.getExtension('WEBGL_depth_texture');
     gl.getExtension('OES_element_index_uint');
@@ -215,6 +217,7 @@ class Renderer {
     const a_position = gl.getAttribLocation(entity.program, 'a_position');
     const a_normal = gl.getAttribLocation(entity.program, 'a_normal');
     const a_texcoord = gl.getAttribLocation(entity.program, 'a_texcoord');
+    const a_color = gl.getAttribLocation(entity.program, 'a_color');
     gl.enableVertexAttribArray(a_position);
     gl.bindBuffer(gl.ARRAY_BUFFER, entity.buffers.position!);
     gl.vertexAttribPointer(a_position, 3, gl.FLOAT, false, 0, 0);
@@ -229,6 +232,12 @@ class Renderer {
       gl.enableVertexAttribArray(a_texcoord);
       gl.bindBuffer(gl.ARRAY_BUFFER, entity.buffers.texcoord!);
       gl.vertexAttribPointer(a_texcoord, 2, gl.FLOAT, false, 0, 0);
+    }
+
+    if (a_color >= 0) {
+      gl.enableVertexAttribArray(a_color);
+      gl.bindBuffer(gl.ARRAY_BUFFER, entity.buffers.color!);
+      gl.vertexAttribPointer(a_color, 3, gl.FLOAT, false, 0, 0);
     }
   }
 
@@ -344,7 +353,7 @@ class Renderer {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, programInfo.indicesBuffer!);
 
         gl.drawElements(
-          gl.TRIANGLES,
+          obj.geometry.drawType,
           // @ts-ignore
           obj.geometry.indices!.length,
           gl.UNSIGNED_SHORT,
@@ -352,7 +361,11 @@ class Renderer {
         );
       } else {
         // @ts-ignore
-        gl.drawArrays(gl.TRIANGLES, 0, obj.geometry.attr.position.length / 3);
+        gl.drawArrays(
+          obj.geometry.drawType,
+          0,
+          obj.geometry.attr.position.length / 3
+        );
       }
     });
   }

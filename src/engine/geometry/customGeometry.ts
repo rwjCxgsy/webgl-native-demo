@@ -37,4 +37,37 @@ class CustomGeometry extends Geometry {
   }
 }
 
-export { CustomGeometry, CustomBoxGeometry };
+class AxisGeometry extends Geometry {
+  constructor(size: number = 100) {
+    const data = {
+      position: new Float32Array([
+        -size,
+        0,
+        0,
+        size,
+        0,
+        0,
+
+        0,
+        -size,
+        0,
+        0,
+        size,
+        0,
+
+        0,
+        0,
+        size,
+        0,
+        0,
+        -size,
+      ]),
+      color: new Float32Array([
+        1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1,
+      ]),
+    };
+    super(data, { vertexCount: 6, drawType: 0x1 });
+  }
+}
+
+export { CustomGeometry, CustomBoxGeometry, AxisGeometry };

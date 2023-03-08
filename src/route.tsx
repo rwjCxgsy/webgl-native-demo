@@ -10,6 +10,8 @@ import Grid from './pages/grid'
 import Hold from './pages/hole'
 import HighMap from './pages/highMap'
 import { LoadModel } from './pages/loadModel'
+import MultipleView from './pages/multiple'
+import Axis from './pages/axis'
 
 const Routes = [
   {
@@ -74,7 +76,12 @@ const Routes = [
       {
         path: "/multiple",
         title: '多视角切换',
-        element: <Demo />,
+        element: <MultipleView />,
+      },
+      {
+        path: "/axis",
+        title: '极坐标系',
+        element: <Axis />,
       },
       {
         path: "/load-model",

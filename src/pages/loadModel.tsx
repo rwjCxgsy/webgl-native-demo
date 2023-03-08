@@ -174,7 +174,7 @@ export function LoadModel () {
     1000
   );
   camera.lookAt(0, 0, 0);
-  camera.setPosition(30, 30, 30);
+  camera.setPosition(20, 20, 20);
 
   const control = new Control(canvas, camera)
 
@@ -212,7 +212,7 @@ export function LoadModel () {
       const x = Math.sin(time / 200) * 20;
       const z = Math.cos(time / 200) * 20
       pointLight.position = [x, pointLight.position[1] ,z]
-      entity?.rotateY(time / 200)
+      // entity?.rotateY(time / 200)
       renderer.render(camera, scene, [baseLight, pointLight]);
     }
     ani = window.requestAnimationFrame(animate)
