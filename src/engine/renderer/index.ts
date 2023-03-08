@@ -364,6 +364,7 @@ class Renderer {
         gl.drawArrays(
           obj.geometry.drawType,
           0,
+          // @ts-ignore
           obj.geometry.attr.position.length / 3
         );
       }
