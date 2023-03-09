@@ -14,6 +14,8 @@ const indices = [
 const color = [
   1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
 ];
+
+//@ts-ignore
 class CustomBoxGeometry extends Geometry {
   constructor() {
     const data = {
@@ -24,7 +26,7 @@ class CustomBoxGeometry extends Geometry {
     super(data, { drawType: 0x1, vertexCount: 12 * 2 });
   }
 }
-
+//@ts-ignore
 class CustomGeometry extends Geometry {
   constructor(
     position: Float32Array,
@@ -40,7 +42,7 @@ class CustomGeometry extends Geometry {
     super(data, options);
   }
 }
-
+//@ts-ignore
 class AxisGeometry extends Geometry {
   constructor(size: number = 100) {
     const data = {
@@ -73,7 +75,7 @@ class AxisGeometry extends Geometry {
     super(data, { vertexCount: 6, drawType: 0x1 });
   }
 }
-
+//@ts-ignore
 class CircleGeometry extends Geometry {
   constructor(size: number = 100) {
     const position = [0, 0, 0];
@@ -93,7 +95,7 @@ class CircleGeometry extends Geometry {
     super(data, { vertexCount: 65, drawType: 0x6 });
   }
 }
-
+//@ts-ignore
 class CustomPlaneGeometry extends Geometry {
   constructor() {
     const position = [0, -1, 0, 1, -1, 0, 0, 1, 0, 0, 1, 0, 1, -1, 0, 1, 1, 0];

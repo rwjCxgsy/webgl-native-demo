@@ -48,6 +48,7 @@ export class Ray {
 
       const d = Math.sqrt(1 - vec3.dot(p1_n, p_n) ** 2) * vec3.length(p1);
 
+      // @ts-ignore
       if (d < v.geometry.radius!) {
         result.push(v);
       }
