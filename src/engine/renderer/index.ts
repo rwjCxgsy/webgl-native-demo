@@ -56,7 +56,6 @@ class Renderer {
   ) {
     const gl = (this.gl = ele.getContext('webgl', { antialias: true })!);
 
-    console.log(gl.TRIANGLES, gl.LINES);
     // 获取深度纹理
     gl.getExtension('WEBGL_depth_texture');
     gl.getExtension('OES_element_index_uint');
@@ -321,6 +320,7 @@ class Renderer {
           });
         }
         const { indicesBuffer, buffers } = this.createAttributes(obj.geometry);
+
         programInfo.buffers = buffers;
         programInfo.indicesBuffer = indicesBuffer;
         programMap.set(obj, programInfo);
@@ -352,9 +352,8 @@ class Renderer {
       if (programInfo.indicesBuffer) {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, programInfo.indicesBuffer!);
         gl.drawElements(
-          obj.geometry.drawType,
-          // @ts-ignore
-          obj.geometry.indices!.length,
+          obj.geometry.drawType || gl.TRIANGLES,
+          obj.geometry.vertexCount,
           gl.UNSIGNED_SHORT,
           0
         );
@@ -364,7 +363,7 @@ class Renderer {
           obj.geometry.drawType,
           0,
           // @ts-ignore
-          obj.geometry.attr.position.length / 3
+          obj.geometry.vertexCount
         );
       }
     });

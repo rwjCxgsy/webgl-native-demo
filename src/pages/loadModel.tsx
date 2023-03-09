@@ -195,7 +195,6 @@ export function LoadModel () {
         new CustomGeometry(POSITION.value, NORMAL.value, TEXCOORD_0.value, header), 
         new StandardMaterial({textures: [new TextureImage2D('./basetexture.jpg', true)]}))
 
-        console.log(material)
       scene.add(entity)
     }
 

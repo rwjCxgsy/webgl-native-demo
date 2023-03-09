@@ -74,4 +74,44 @@ class AxisGeometry extends Geometry {
   }
 }
 
-export { CustomGeometry, CustomBoxGeometry, AxisGeometry };
+class CircleGeometry extends Geometry {
+  constructor(size: number = 100) {
+    const position = [0, 0, 0];
+    const color = [1, 0, 0];
+
+    for (let i = 0; i <= 64; i++) {
+      const x = Math.cos(((Math.PI * 2) / 64) * i) * 1;
+      const z = Math.sin(((Math.PI * 2) / 64) * i) * 1;
+      position.push(x, 1, z);
+      color.push(1, 0, 0);
+    }
+
+    const data = {
+      position: new Float32Array(position),
+      color: new Float32Array(color),
+    };
+    super(data, { vertexCount: 65, drawType: 0x6 });
+  }
+}
+
+class CustomPlaneGeometry extends Geometry {
+  constructor() {
+    const position = [0, -1, 0, 1, -1, 0, 0, 1, 0, 0, 1, 0, 1, -1, 0, 1, 1, 0];
+    const color = [0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1];
+
+    const data = {
+      position: new Float32Array(position),
+      color: new Float32Array(color),
+      // indices: new Float32Array([0, 1, 3, 3, 1, 2]),
+    };
+    super(data, { vertexCount: 6 });
+  }
+}
+
+export {
+  CustomGeometry,
+  CustomBoxGeometry,
+  AxisGeometry,
+  CircleGeometry,
+  CustomPlaneGeometry,
+};

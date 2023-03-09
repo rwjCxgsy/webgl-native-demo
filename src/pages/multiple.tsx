@@ -23,7 +23,6 @@ export default function MultipleView () {
   const container = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
 
-    console.log(new BoxGeometry(10, 10, 10))
     const canvas = container.current!;
     const { width, height } = document
     .querySelector('#detail')!

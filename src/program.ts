@@ -25,7 +25,6 @@ function createShaderProgram(gl: WebGLRenderingContext, material: Material) {
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.log(gl.getProgramInfoLog(program));
     throw new Error('program error');
   }
   return program;

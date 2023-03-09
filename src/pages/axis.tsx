@@ -8,11 +8,13 @@ import { Entity, Object3D } from '../engine/eneity';
 
 import {
   AxisGeometry,
+  CircleGeometry,
   CustomGeometry,
+  CustomPlaneGeometry,
 } from '../engine/geometry/customGeometry';
 import { BasicMaterial, StandardMaterial } from '../engine/materials';
 import { TextureImage2D } from '../engine/texture';
-import { SphereGeometry } from '../engine/geometry';
+import { PlaneGeometry, SphereGeometry } from '../engine/geometry';
 import { Control } from '../engine/control';
 
 import { BoxGeometry } from 'three';
@@ -24,8 +26,8 @@ export default function Axis() {
   useEffect(() => {
     const options = {
       radius: 10,
-      a: 0,
-      b: 0,
+      a: 30,
+      b: 20,
     };
     const canvas = container.current!;
     const { width, height } = document
@@ -56,7 +58,7 @@ export default function Axis() {
 
     let point: Object3D = new Entity(
       new SphereGeometry(),
-      new StandardMaterial({ color: 0x3366ff })
+      new StandardMaterial({ color: 0xffffff })
     );
 
 
@@ -64,7 +66,21 @@ export default function Axis() {
 
     scene.add(point);
 
+    const entityX = new Entity(new CircleGeometry(), new LineMaterial());
+    entityX.scaleX(0)
+    entityX.scaleZ(0)
+    entityX.scaleY(options.radius)
+    scene.add(entityX)
+
+    const entityY = new Entity(new CustomPlaneGeometry(), new LineMaterial());
+
+    entityY.scaleX(0);
+    entityY.scaleY(options.radius * 2)
+    scene.add(entityY)
+
     let ani: number = 0;
+
+    toPosition();
 
     function animate(time: number) {
       ani = window.requestAnimationFrame(animate);
@@ -81,7 +97,15 @@ export default function Axis() {
       const x = options.radius * Math.sin(a) * Math.cos(b)
       const y = options.radius * Math.sin(a) * Math.sin(b);
       const z = options.radius * Math.cos(a)
-      point.setPosition([x, z, y]); 
+      point.setPosition([x, z, y]);
+      entityX.scaleX(Math.sin(a) * options.radius)
+      entityX.scaleZ(Math.sin(a) * options.radius)
+      entityX.scaleY(z)
+
+
+      entityY.scaleX(Math.sin(a) * options.radius);
+      entityY.scaleY(options.radius * 2)
+      entityY.rotateY(-options.b)
     }
 
     const gui = new GUI();

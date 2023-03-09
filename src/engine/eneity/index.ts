@@ -13,6 +13,10 @@ export class Object3D {
   public yRotate: number = 0;
   public zRotate: number = 0;
 
+  public scaleSizeX: number = 1;
+  public scaleSizeY: number = 1;
+  public scaleSizeZ: number = 1;
+
   public name?: string;
 
   constructor(public geometry: Geometry, public material: Material) {
@@ -33,6 +37,11 @@ export class Object3D {
     mat4.rotateX(rotateXyz, mat4.create(), this.xRotate);
     mat4.rotateY(rotateXyz, rotateXyz, this.yRotate);
     mat4.rotateZ(rotateXyz, rotateXyz, this.zRotate);
+    mat4.scale(rotateXyz, rotateXyz, [
+      this.scaleSizeX,
+      this.scaleSizeY,
+      this.scaleSizeZ,
+    ]);
 
     mat4.multiply(this.modelView, rotateXyz, translate);
   }
@@ -52,6 +61,19 @@ export class Object3D {
   }
   rotateZ(radius: number) {
     this.zRotate = (Math.PI / 180) * radius;
+    this.transform();
+  }
+
+  scaleX(size: number) {
+    this.scaleSizeX = size;
+    this.transform();
+  }
+  scaleY(size: number) {
+    this.scaleSizeY = size;
+    this.transform();
+  }
+  scaleZ(size: number) {
+    this.scaleSizeZ = size;
     this.transform();
   }
 
