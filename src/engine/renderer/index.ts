@@ -451,7 +451,7 @@ class Renderer {
       gl.drawElements(
         gl.LINES,
         // @ts-ignore
-        this.frustumEntity.geometry.indicesLength,
+        this.frustumEntity.geometry.vertexCount,
         gl.UNSIGNED_SHORT,
         0
       );

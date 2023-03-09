@@ -21,7 +21,7 @@ class CustomBoxGeometry extends Geometry {
       color: new Float32Array(color),
       indices: new Uint16Array(indices),
     };
-    super(data);
+    super(data, { drawType: 0x1, vertexCount: 12 * 2 });
   }
 }
 
