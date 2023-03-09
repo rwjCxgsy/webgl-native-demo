@@ -44,7 +44,7 @@ function start(canvas: HTMLCanvasElement) {
     1000
   );
   camera.lookAt(0, 0, 0);
-  camera.setPosition(0, 60, 150);
+  camera.setPosition(0, 100, 150);
 
   // 添加灯光
   const baseLight = new AmbientLight([1, 1, 1]);
@@ -87,7 +87,7 @@ function start(canvas: HTMLCanvasElement) {
 
   // 天空穹
   const sky = new Entity(
-    new SphereGeometry(320, 64, 32, 0, Math.PI / 2, 0, Math.PI * 2),
+    new SphereGeometry(420, 64, 32, 0, Math.PI / 2, 0, Math.PI * 2),
     new SkyMaterial({
       color: 0x3366ff,
     })
@@ -97,7 +97,7 @@ function start(canvas: HTMLCanvasElement) {
   scene.add(sky);
 
   const water = new Entity(
-    new PlaneGeometry(500, 500),
+    new PlaneGeometry(600, 600),
     new ShaderMaterial(waterVs, waterFs, {
       color: 0x3366ff,
       shadow: true,

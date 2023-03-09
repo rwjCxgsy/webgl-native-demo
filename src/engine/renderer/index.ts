@@ -302,9 +302,9 @@ class Renderer {
 
     let currentProgram: ProgramInfo;
     scene.forEach((obj) => {
-      // if (obj.name === 'sky') {
-      //   return;
-      // }
+      if (obj.name === 'sky' && this.renderType === RenderType.Shadow) {
+        return;
+      }
       let programInfo = programMap.get(obj);
       if (!programInfo) {
         programInfo = {
