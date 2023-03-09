@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Color, Matrix3, Vector2, Vector3 } from 'three';
-import { drawCell, drawLine, drawPoint, Triangle, Vec2 } from './units';
-import useAxis from './useAxis';
+import { drawCell, drawLine, drawPoint, Triangle, Vec2 } from '../units';
+import useAxis from '../useAxis';
 
 export default function Matrix() {
   const { ctxRef, ctxBaseProjection } = useAxis();

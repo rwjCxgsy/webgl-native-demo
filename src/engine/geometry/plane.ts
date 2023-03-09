@@ -1,6 +1,7 @@
 import { mat4, vec3 } from 'gl-matrix';
 import { Geometry } from './geometry';
 import { createPlaneVertices } from '../utils/geometry';
+import { Ray } from '../tools/ray';
 
 class PlaneGeometry extends Geometry {
   constructor(
@@ -19,6 +20,9 @@ class PlaneGeometry extends Geometry {
         matrix
       )
     );
+  }
+  RayTrace(ray: Ray): boolean {
+    return false;
   }
 }
 

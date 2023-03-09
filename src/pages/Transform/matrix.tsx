@@ -2,8 +2,8 @@
 import GUI from 'lil-gui'
 import { memo, useEffect, useRef } from 'react'
 import { Matrix3 } from 'three'
-import { drawAxis } from './units'
-import useAxis from './useAxis'
+import { drawAxis } from '../units'
+import useAxis from '../useAxis'
 function Matrix() {
   const {ctxRef, ctxBaseProjection} = useAxis()
 

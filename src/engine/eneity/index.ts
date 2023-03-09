@@ -19,6 +19,8 @@ export class Object3D {
 
   public name?: string;
 
+  public userData: any = {};
+
   constructor(public geometry: Geometry, public material: Material) {
     this.id = Math.random().toString().substring(2);
     // const defaultOptions = {

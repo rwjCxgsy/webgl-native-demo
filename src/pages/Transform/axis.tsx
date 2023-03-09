@@ -1,24 +1,24 @@
 import { OBJLoader, MTLLoader } from '@loaders.gl/obj';
 import { load } from '@loaders.gl/core';
 import { useEffect, useRef } from 'react';
-import { Renderer } from '../engine/renderer';
-import { Camera } from '../engine/renderer/camera';
-import { AmbientLight, PointLight } from '../engine/light/light';
-import { Entity, Object3D } from '../engine/eneity';
+import { Renderer } from '../../engine/renderer';
+import { Camera } from '../../engine/renderer/camera';
+import { AmbientLight, PointLight } from '../../engine/light/light';
+import { Entity, Object3D } from '../../engine/eneity';
 
 import {
   AxisGeometry,
   CircleGeometry,
   CustomGeometry,
   CustomPlaneGeometry,
-} from '../engine/geometry/customGeometry';
-import { BasicMaterial, StandardMaterial } from '../engine/materials';
-import { TextureImage2D } from '../engine/texture';
-import { PlaneGeometry, SphereGeometry } from '../engine/geometry';
-import { Control } from '../engine/control';
+} from '../../engine/geometry/customGeometry';
+import { BasicMaterial, StandardMaterial } from '../../engine/materials';
+import { TextureImage2D } from '../../engine/texture';
+import { PlaneGeometry, SphereGeometry } from '../../engine/geometry';
+import { Control } from '../../engine/control';
 
 import { BoxGeometry } from 'three';
-import { LineMaterial } from '../engine/materials/LineMaterial';
+import { LineMaterial } from '../../engine/materials/LineMaterial';
 import GUI from 'lil-gui';
 
 export default function Axis() {

@@ -1,16 +1,16 @@
 import {OBJLoader, MTLLoader} from '@loaders.gl/obj';
 import {load} from '@loaders.gl/core';
 import { useEffect, useRef } from 'react';
-import { Renderer } from '../engine/renderer';
-import { Camera } from '../engine/renderer/camera';
-import { AmbientLight, PointLight } from '../engine/light/light';
-import { Entity, Object3D } from '../engine/eneity';
+import { Renderer } from '../../engine/renderer';
+import { Camera } from '../../engine/renderer/camera';
+import { AmbientLight, PointLight } from '../../engine/light/light';
+import { Entity, Object3D } from '../../engine/eneity';
 
-import { CustomGeometry } from "../engine/geometry/customGeometry";
-import { StandardMaterial } from '../engine/materials';
-import { TextureImage2D } from '../engine/texture';
-import { SphereGeometry } from '../engine/geometry';
-import { Control } from '../engine/control';
+import { CustomGeometry } from "../../engine/geometry/customGeometry";
+import { StandardMaterial } from '../../engine/materials';
+import { TextureImage2D } from '../../engine/texture';
+import { SphereGeometry } from '../../engine/geometry';
+import { Control } from '../../engine/control';
 
 
 

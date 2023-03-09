@@ -1,3 +1,5 @@
+import { Ray } from '../tools/ray';
+
 interface Attributes {
   position: ArrayBuffer;
   normal?: ArrayBuffer;
@@ -12,7 +14,7 @@ export interface Options {
   drawType?: number;
 }
 
-export class Geometry {
+export abstract class Geometry {
   public attr: Attributes;
   public indices?: ArrayBuffer;
   public indicesLength?: number;
@@ -34,4 +36,6 @@ export class Geometry {
 
     delete attributes.indices;
   }
+
+  abstract RayTrace(ray: Ray): boolean;
 }

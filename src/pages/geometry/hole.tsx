@@ -11,8 +11,8 @@ import {
   polygonIsTu,
   Triangle,
   Vec2,
-} from './units';
-import useAxis from './useAxis';
+} from '../units';
+import useAxis from '../useAxis';
 
 export default function Hold() {
   const { ctxRef, ctxBaseProjection } = useAxis();

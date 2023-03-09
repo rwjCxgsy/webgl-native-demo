@@ -1,8 +1,8 @@
-import { Entity, Object3D } from "../engine/eneity";
-import { PlaneGeometry } from "../engine/geometry";
-import { ShaderMaterial } from "../engine/materials";
-import { getNormalByHighMap } from "../engine/utils/highMap";
-import { TextureImage2D } from "../engine/texture";
+import { Entity, Object3D } from "../../engine/eneity";
+import { PlaneGeometry } from "../../engine/geometry";
+import { ShaderMaterial } from "../../engine/materials";
+import { getNormalByHighMap } from "../../engine/utils/highMap";
+import { TextureImage2D } from "../../engine/texture";
 
 import a_url from '/assets/texture/mountain/default_c.png';
 import b_url from '/assets/texture/mountain/default_d.png';
@@ -11,12 +11,12 @@ import d_url from '/assets/texture/mountain/grayRock.png';
 import e_url from '/assets/texture/mountain/hardDirt.png';
 import f_url from '/assets/texture/mountain/shortGrass.png';
 
-import mountainVs from '../engine/materials/shader/mountain/shader.vs.glsl?raw';
-import mountainFs from '../engine/materials/shader/mountain/shader.fs.glsl?raw';
+import mountainVs from '../../engine/materials/shader/mountain/shader.vs.glsl?raw';
+import mountainFs from '../../engine/materials/shader/mountain/shader.fs.glsl?raw';
 import { useEffect, useRef } from "react";
-import { Renderer } from "../engine/renderer";
-import { Camera } from "../engine/renderer/camera";
-import { AmbientLight, PointLight } from "../engine/light/light";
+import { Renderer } from "../../engine/renderer";
+import { Camera } from "../../engine/renderer/camera";
+import { AmbientLight, PointLight } from "../../engine/light/light";
 
 
 export default function HighMap () {

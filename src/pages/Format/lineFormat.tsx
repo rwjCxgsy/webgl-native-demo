@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 import { Color, Matrix3 } from "three";
-import { drawCell, drawLine, Line, Vec2 } from "./units";
-import useAxis from "./useAxis";
+import { drawCell, drawLine, Line, Vec2 } from "../units";
+import useAxis from "../useAxis";
 
 
 

@@ -30,7 +30,6 @@ export class Polygon {
 
   inspection(point: Vec2): boolean {
     const ray = new Ray(point, new Vec2());
-    // const nRay = new Ray(new Vec2(), point.clone().negate())
 
     const data = [...this.path, this.path[0]];
     let crossPointNumber = 0;

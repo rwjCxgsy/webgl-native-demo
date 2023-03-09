@@ -29,12 +29,6 @@ class Camera {
     );
   }
 
-  // get viewMatrix() {
-  //   let view = mat4.create();
-  //   mat4.targetTo(view, this.position, this.target, this.up);
-  //   return view;
-  // }
-
   get viewMatrixInverse() {
     const m4 = mat4.create();
     mat4.invert(m4, this.viewMatrix);

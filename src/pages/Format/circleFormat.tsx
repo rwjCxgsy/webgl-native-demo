@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Color, Matrix3, Vector2, Vector3 } from 'three';
-import { drawCell, drawCircle, drawLine, drawPoint, Triangle, Vec2 } from './units';
-import useAxis from './useAxis';
+import { drawCell, drawCircle, drawLine, drawPoint, Triangle, Vec2 } from '../units';
+import useAxis from '../useAxis';
 
 export default function Circle() {
   const { ctxRef, ctxBaseProjection } = useAxis();

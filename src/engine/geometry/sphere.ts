@@ -1,16 +1,18 @@
+import { Object3D } from '../eneity/index';
 import { vec3 } from 'gl-matrix';
 import { Geometry } from './geometry';
 import { createSphereVertices } from '../utils/geometry';
+import { Ray } from '../tools/ray';
 
 class SphereGeometry extends Geometry {
   constructor(
-    radius: number = 1,
-    subdivisionsAxis: number = 32,
-    subdivisionsHeight: number = 16,
-    opt_startLatitudeInRadians: number = 0,
-    opt_endLatitudeInRadians: number = Math.PI,
-    opt_startLongitudeInRadians: number = 0,
-    opt_endLongitudeInRadians: number = Math.PI * 2
+    public radius: number = 1,
+    public subdivisionsAxis: number = 32,
+    public subdivisionsHeight: number = 16,
+    public opt_startLatitudeInRadians: number = 0,
+    public opt_endLatitudeInRadians: number = Math.PI,
+    public opt_startLongitudeInRadians: number = 0,
+    public opt_endLongitudeInRadians: number = Math.PI * 2
   ) {
     super(
       createSphereVertices(
@@ -23,6 +25,10 @@ class SphereGeometry extends Geometry {
         opt_endLongitudeInRadians
       )
     );
+  }
+
+  RayTrace(ray: Ray): boolean {
+    return false;
   }
 }
 

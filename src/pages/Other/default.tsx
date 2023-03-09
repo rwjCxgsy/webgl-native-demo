@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import {start}from '../main';
+import {start}from '../../main';
 
 export default function Demo() {
 
